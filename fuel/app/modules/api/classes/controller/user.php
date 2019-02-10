@@ -4,7 +4,7 @@ namespace Api;
 
 class Controller_User extends Controller_Base
 {
-  public function post_signup()
+  public function post_sign_up()
   {
     try {
       \Auth::create_user(
@@ -47,7 +47,7 @@ class Controller_User extends Controller_Base
     }
   }
 
-  public function logout()
+  public function post_logout()
   {
     try {
       if (\Auth::logout()) {
@@ -68,5 +68,71 @@ class Controller_User extends Controller_Base
       ];
     }
   }
+
+  public function patch_update()
+  {
+    try {
+      if (!\Auth::check()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          'need to login.'
+        ];
+        return;
+      }
+      $params = array();
+      $email = \Input::patch('email');
+      $nickname = \Input::patch('nickname');
+
+      if (!empty($email)) {
+        $params['email'] = $email;
+      }
+      if (!empty($nickname)) {
+        $params['email'] = $nickname;
+      }
+      \Auth::update_user($params
+      );
+      unset($this->body['data']);
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::INVALID_REQUEST,
+        $e->getMessage()
+      ];
+    }
+  }
+
+//  public function get_my_info()
+//  {
+//    try {
+//      if (!\Auth::check()) {
+//        $this->failed();
+//        $this->error = [
+//          E::UNAUTHNTICATED,
+//          'need to login.'
+//        ];
+//        return;
+//      }
+//      $id = \Auth::get_user_id()[1];
+//
+//      if (!empty($email)) {
+//        $params['email'] = $email;
+//      }
+//      if (!empty($nickname)) {
+//        $params['email'] = $nickname;
+//      }
+//      \Auth::update_user($params
+//      );
+//      unset($this->body['data']);
+//      $this->success();
+//    } catch (\Exception $e) {
+//      $this->failed();
+//      $this->error = [
+//        E::INVALID_REQUEST,
+//        $e->getMessage()
+//      ];
+//    }
+//  }
 }
 
