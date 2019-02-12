@@ -4,7 +4,7 @@ namespace Api;
 
 class Controller_User extends Controller_Base
 {
-  public function post_signup()
+  public function post_sign_up()
   {
     try {
       \Auth::create_user(
