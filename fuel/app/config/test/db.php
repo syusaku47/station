@@ -25,7 +25,7 @@
 return array(
 	'default' => array(
 		'connection' => array(
-			'dsn'      => 'mysql:host=192.168.11.8;dbname=station',
+			'dsn'      => 'mysql:host=localhost;dbname=station',
 			'username' => 'station',
 			'password' => 'llgS#BmyA&R&',
 		),
