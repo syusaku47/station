@@ -1,7 +1,9 @@
 # Multiple Environment config, set this to development, staging or production
 # SetEnv FUEL_ENV production
- SetEnv FUEL_ENV development
 
+Header set Access-Control-Allow-Origin "http://tomato.local:3000"
+Header set Access-Control-Allow-Credentials true
+Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS, PATCH"
 
 <IfModule mod_rewrite.c>
 
