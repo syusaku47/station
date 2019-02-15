@@ -23,7 +23,7 @@ return array(
 	 *
 	 * Set this to null to have it automatically detected.
 	 */
-	'base_url'  => '/',
+	'base_url'  => 'https://station.marietta.co.jp/',
 
 	/**
 	 * url_suffix - Any suffix that needs to be added to
@@ -199,7 +199,7 @@ return array(
 		// Only transmit cookies over secure connections
 		//'secure'      => true,
 		// Only transmit cookies over HTTP, disabling Javascript access
-		//'http_only'   => false,
+		//'http_only'   => true,
 	//),
 
 	/**
