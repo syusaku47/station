@@ -116,14 +116,6 @@ class Controller_User extends Controller_Base
   public function patch_update()
   {
     try {
-      if (!\Auth::check()) {
-        $this->failed();
-        $this->error = [
-          E::UNAUTHNTICATED,
-          'ログインしてください'
-        ];
-        return;
-      }
       $params = array();
       $email = \Input::patch('email');
       $nickname = \Input::patch('nickname');
@@ -201,14 +193,7 @@ class Controller_User extends Controller_Base
   public function patch_change_password()
   {
     try {
-      if (!\Auth::check()) {
-        $this->failed();
-        $this->error = [
-          E::UNAUTHNTICATED,
-          'need to login.'
-        ];
-        return;
-      }
+
       $old_password = \Input::patch('old_password');
       $new_password = \Input::patch('new_password');
 
@@ -225,7 +210,7 @@ class Controller_User extends Controller_Base
     }
   }
 
-  public function post_password_reissue_request()
+  public function post_send_reissue_mail()
   {
 
     if (!$data = $this->verify([
@@ -252,26 +237,27 @@ class Controller_User extends Controller_Base
     try {
 
       $user->create_hash();
+      $path = \Input::post('path');
 
       $email_user = [];
       $email_user['user'] = $user;
-      $reissue_url = \Uri::base(false) . "#/setting-pass/";
+      $reissue_url = \Uri::base(false) . $path;
       $email_user['reissue_url'] = $reissue_url;
       $this->data = $reissue_url;
-//      \Email::forge()
-//        ->from('info')
-//        ->to($user->email)
-//        ->subject('【みんなの駅】パスワード再発行のご案内')
-//        ->body(\View::forge('preissue', $email_user))
-//        ->send();
-      // unset($this->body['data']);
+      \Email::forge()
+        ->from('info')
+        ->to($user->email)
+        ->subject('【みんなの駅】パスワード再発行のご案内')
+        ->body(\View::forge('preissue', $email_user))
+        ->send();
+      unset($this->body['data']);
       $this->success();
 
     } catch (\Exception $e) {
       $this->failed();
       \Log::error($e->getMessage());
       $this->error = [
-        E::SERVER_ERROR,
+        E::INVALID_REQUEST,
         $e->getMessage() . ' ' . $e->getFile() . ' ', $e->getLine()
       ];
     }
@@ -366,9 +352,19 @@ class Controller_User extends Controller_Base
 
   public function get_user_list()
   {
-    $result = \Auth_User::find('all');
-    $this->success();
-    $this->data = $result;
+    try {
+      $query = \DB::query('select u.id, u.username, m.value as nickname , u.email, u.last_login, u.previous_login, u.created_at, u.updated_at
+       from users u inner join users_metadata m on u.id = m.parent_id where m.key = \'nickname\'');
+      $this->body['data'] = $query->execute();
+    } catch (\Exception $e) {
+      $this->failed();
+      \Log::error($e->getMessage());
+      $this->error = [
+        E::SERVER_ERROR,
+        '更新に失敗しました'
+      ];
+    }
   }
+
 }
 
