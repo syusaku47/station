@@ -185,7 +185,7 @@ class Controller_User extends Controller_Base
         ];
         return;
       }
-      $result = $user->to_array();
+      $user->to_array();
       $info['id'] = $user['id'];
       $info['nickname'] = $user['nickname'];
       $info['email'] = $user['email'];
@@ -197,7 +197,7 @@ class Controller_User extends Controller_Base
       $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s",$user['updated_at']);
 
       $this->success();
-      $this->data = $result;
+      $this->data = $info;
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
@@ -342,6 +342,10 @@ class Controller_User extends Controller_Base
         ]
       ]
     ])) {
+      $this->error = [
+        E::INVALID_PARAM,
+        '不正なパラメータです。'
+      ];
       return;
     }
 
