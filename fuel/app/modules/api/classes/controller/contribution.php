@@ -7,15 +7,15 @@ class Controller_Contribution extends Controller_Base
   public function get_site_list()
   {
     try {
-      $tmp = \DB::query('select id, name from sites')->execute();
-      $this->data = $tmp;
+      $this->data = \Model_Site::query()->select('id', 'name')->get();
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        $e->getMessage()
+        'サーバエラーが発生しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -23,16 +23,15 @@ class Controller_Contribution extends Controller_Base
   {
     try {
       $site_id = \Input::get('site_id');
-      $query = \DB::query('select id, name from facilities where site_id = :site_id');
-      $query->bind('site_id', $site_id);
-      $this->data = $query->execute();
+      $this->data = \Model_Facility::query()->select('id', 'name')->where('site_id', $site_id)->get();
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        $e->getMessage()
+        'サーバエラーが発生しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 }

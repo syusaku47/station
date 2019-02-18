@@ -47,6 +47,7 @@ class Controller_User extends Controller_Base
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
+      $this->body['errorlog'] = $e->getMessage();
       $this->error = [
         E::INVALID_REQUEST,
         $e->getMessage()
@@ -75,6 +76,12 @@ class Controller_User extends Controller_Base
           ]
         ]
       ])) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          'メールアドレスまたはパスワードが違います'
+        ];
+
         return;
       }
       if (\Auth::login(\Input::post('email'), \Input::post('password'))) {
@@ -95,6 +102,7 @@ class Controller_User extends Controller_Base
         E::UNAUTHNTICATED,
         'メールアドレスまたはパスワードが違います'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -116,18 +124,44 @@ class Controller_User extends Controller_Base
   public function patch_update()
   {
     try {
+      if (!$data = $this->verify([
+        'email' => [
+          'label' => 'メールアドレス',
+          'validation' => [
+            'valid_email'
+          ]
+        ]
+      ])) {
+        return;
+      }
       $params = array();
       $email = \Input::patch('email');
       $nickname = \Input::patch('nickname');
+      $age = \Input::patch('age');
+      $sex = \Input::patch('sex');
 
       if (!empty($email)) {
         $params['email'] = $email;
       }
       if (!empty($nickname)) {
-        $params['email'] = $nickname;
+        $params['nickname'] = $nickname;
       }
-      \Auth::update_user($params
-      );
+      if (!empty($age)) {
+        if(!is_numeric($age)){
+          $this->failed();
+          $this->error = [
+            E::INVALID_REQUEST,
+            '年齢を正しく入力してください。'
+          ];
+          return;
+        }else{
+          $params['age'] = $age;
+        }
+      }
+      if (!empty($sex)) {
+        $params['sex'] = $sex;
+      }
+      \Auth::update_user($params);
       unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
@@ -135,7 +169,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        'ログインしてください'
+        $e->getMessage()
       ];
     }
   }
@@ -147,20 +181,30 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした'
+          '該当するユーザ情報がありませんでした。'
         ];
         return;
       }
       $result = $user->to_array();
-      $result['nickname'] = $user->nickname;
+      $info['id'] = $user['id'];
+      $info['nickname'] = $user['nickname'];
+      $info['email'] = $user['email'];
+      $info['age'] = $user['age'];
+      $info['sex'] = $user['sex'];
+      $info['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
+      $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
+      $info['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
+      $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s",$user['updated_at']);
+
       $this->success();
       $this->data = $result;
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage()
+        '該当するユーザ情報がありませんでした。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -172,7 +216,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした'
+          '該当するユーザ情報がありませんでした。'
         ];
         return;
       }
@@ -185,8 +229,9 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage()
+        '該当するユーザ情報がありませんでした。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -205,8 +250,9 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage()
+        'パスワードの変更に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -229,7 +275,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::NOT_FOUND,
-        '該当するユーザ情報がありませんでした'
+        '該当するユーザ情報がありませんでした。'
       ];
       return;
     }
@@ -258,8 +304,9 @@ class Controller_User extends Controller_Base
       \Log::error($e->getMessage());
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage() . ' ' . $e->getFile() . ' ', $e->getLine()
+        'メールの送信に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -269,7 +316,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
-        '有効ではありません'
+        '有効ではありません。'
       ];
     }
     $keys = ['id', 'nickname', 'email'];
@@ -305,7 +352,7 @@ class Controller_User extends Controller_Base
       if ($user == null) {
         $this->error = [
           E::INVALID_PARAM,
-          '該当するユーザ情報がありませんでした'
+          '該当するユーザ情報がありませんでした。'
         ];
       } else {
         $user->password = $password;
@@ -320,8 +367,9 @@ class Controller_User extends Controller_Base
       \Log::error($e->getMessage());
       $this->error = [
         E::SERVER_ERROR,
-        '更新に失敗しました'
+        '更新に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
@@ -333,7 +381,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした'
+          '該当するユーザ情報がありませんでした。'
         ];
         return;
       }
@@ -345,24 +393,41 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage()
+        '削除に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
   public function get_user_list()
   {
     try {
-      $query = \DB::query('select u.id, u.username, m.value as nickname , u.email, u.last_login, u.previous_login, u.created_at, u.updated_at
-       from users u inner join users_metadata m on u.id = m.parent_id where m.key = \'nickname\'');
-      $this->body['data'] = $query->execute();
+      $list = array();
+      $users  = \Auth_User::find('all');
+      foreach ($users as $user){
+        $user->to_array();
+        $tmp = array();
+        $tmp['id'] = $user['id'];
+        $tmp['nickname'] = $user['nickname'];
+        $tmp['email'] = $user['email'];
+        $tmp['age'] = $user['age'];
+        $tmp['sex'] = $user['sex'];
+        $tmp['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
+        $tmp['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
+        $tmp['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
+        $tmp['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s",$user['updated_at']);
+        $list[] = $tmp;
+      }
+
+      $this->data = $list;
     } catch (\Exception $e) {
       $this->failed();
       \Log::error($e->getMessage());
       $this->error = [
         E::SERVER_ERROR,
-        '更新に失敗しました'
+        'ユーザ情報の取得に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 

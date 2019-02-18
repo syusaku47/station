@@ -34,19 +34,19 @@ class Auth_User extends \Auth\Model\Auth_User
 //            'key_to'   => 'parent_id',
 //            'cascade_delete' => true,
 //        ),
-    'nickname' => array(
-      'model_to' => 'Model\\Auth_Metadata',
-      'key_from' => 'id',
-      'key_to'   => 'parent_id',
-      'cascade_delete' => true,
-      'conditions' => [
-        'where' => [
-          [
-            'key', '=', 'nickname'
-          ]
-        ]
-      ]
-    ),
+//    'nickname' => array(
+//      'model_to' => 'Model\\Auth_Metadata',
+//      'key_from' => 'id',
+//      'key_to'   => 'parent_id',
+//      'cascade_delete' => true,
+//      'conditions' => [
+//        'where' => [
+//          [
+//            'key', '=', 'nickname'
+//          ]
+//        ]
+//      ]
+//    ),
   );
 
   protected static $_to_array_exclude = [
