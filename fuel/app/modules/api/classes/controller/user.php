@@ -151,7 +151,7 @@ class Controller_User extends Controller_Base
       if (!empty($sex)) {
         $params['sex'] = $sex;
       }
-      
+
       \Auth::update_user($params, $user->username);
       unset($this->body['data']);
       $this->success();
