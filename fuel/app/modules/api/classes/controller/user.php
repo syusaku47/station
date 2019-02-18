@@ -124,22 +124,12 @@ class Controller_User extends Controller_Base
   public function patch_update()
   {
     try {
-      if (!$data = $this->verify([
-        'email' => [
-          'label' => 'メールアドレス',
-          'validation' => [
-            'valid_email'
-          ]
-        ]
-      ])) {
-        return;
-      }
+      $user = \Auth_User::get_user();
+
       $params = array();
-      $email = \Input::patch('email');
       $nickname = \Input::patch('nickname');
       $age = \Input::patch('age');
       $sex = \Input::patch('sex');
-
       if (!empty($email)) {
         $params['email'] = $email;
       }
@@ -161,7 +151,8 @@ class Controller_User extends Controller_Base
       if (!empty($sex)) {
         $params['sex'] = $sex;
       }
-      \Auth::update_user($params);
+      
+      \Auth::update_user($params, $user->username);
       unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
@@ -169,8 +160,9 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        $e->getMessage()
+        '更新に失敗しました。'
       ];
+      $this->body['errorlog'] = $e->getMessage();
     }
   }
 
