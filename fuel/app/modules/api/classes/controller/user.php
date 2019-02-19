@@ -229,12 +229,11 @@ class Controller_User extends Controller_Base
   public function patch_change_password()
   {
     try {
-
-      $old_password = \Input::patch('old_password');
-      $new_password = \Input::patch('new_password');
-
-      \Auth::change_password($old_password, $new_password
-      );
+      $password = \Input::patch('new_password');
+      $new_password = \Auth::hash_password($password);
+      $user = \Auth_User::get_user();
+      $user->password = $new_password;
+      $user->save();
       unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
@@ -404,8 +403,8 @@ class Controller_User extends Controller_Base
         $tmp['id'] = $user['id'];
         $tmp['nickname'] = $user['nickname'];
         $tmp['email'] = $user['email'];
-        $tmp['age'] = $user['age'];
-        $tmp['sex'] = $user['sex'];
+        $tmp['age'] = $user['age'] ? $user['age'] : '';
+        $tmp['sex'] = $user['sex'] ? $user['sex'] : '';
         $tmp['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
         $tmp['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
         $tmp['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
