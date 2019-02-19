@@ -111,10 +111,11 @@ class Controller_Contribution extends Controller_Base
         \Upload::process($config);
         if (\Upload::is_valid()) {
           \Upload::save();
-          $file = \Upload::get_files();
+          $file = \Upload::get_files()[0];
           // 正常保存された場合、アップロードファイル情報を取得
           if ($file) {
-            $thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
+            //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
+            $thumbnail_before = \Uri::base(false).'contents/'.$file['saved_as'];
           } else {
             $this->failed();
             $this->error = [
@@ -136,12 +137,14 @@ class Controller_Contribution extends Controller_Base
       $post->contributor_id = $contributor_id;
       $post->route_id = $route_id;
       $post->station_id = $station_id;
+      $post->status = '未対応';
       $post->site_id = $site_id;
       $post->facility_id = $facility_id;
       $post->overview = $overview;
       $post->remarks = $remarks;
       $post->thumbnail_before = $thumbnail_before;
       $post->save();
+      unset($this->body['data']);
       $this->success();
 
 

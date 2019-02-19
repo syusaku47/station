@@ -355,6 +355,7 @@ class Controller_User extends Controller_Base
         $user->password = $password;
 
         $user->save();
+        $user->delete_hash();
         $this->success();
 
       }
