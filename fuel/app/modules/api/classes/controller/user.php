@@ -354,7 +354,7 @@ class Controller_User extends Controller_Base
       } else {
         $user->password = $password;
         $user->save();
-        $meta = Auth_Metadata::query()->where('parent_id', $data['id'])
+        $meta = \Auth_Metadata::query()->where('parent_id', $data['id'])
           ->where('key', 'hash')
           ->get_one();
         $delete_hash = array('created_at' => strtotime('-1 day'));
