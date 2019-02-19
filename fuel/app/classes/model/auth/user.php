@@ -180,8 +180,12 @@ class Auth_User extends \Auth\Model\Auth_User
 
   public function delete_hash()
   {
-    $this->hash = null;
-    $this->save();
+    $meta = Auth_Metadata::query()->select('value')
+      ->where('parent_id', $this->id)
+      ->where('key', 'hash')
+      ->get_one();
+    $tmp = array('created_at', strtotime('-1 day'));
+    $meta->set($tmp)->save();
   }
 
   /*

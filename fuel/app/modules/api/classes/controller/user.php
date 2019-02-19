@@ -1,7 +1,6 @@
 <?php
 
 namespace Api;
-use \Auth\Model\Auth_Metadata;
 class Controller_User extends Controller_Base
 {
   public function post_sign_up()
@@ -354,11 +353,7 @@ class Controller_User extends Controller_Base
       } else {
         $user->password = $password;
         $user->save();
-        $meta = \Auth_Metadata::query()->where('parent_id', $data['id'])
-          ->where('key', 'hash')
-          ->get_one();
-        $delete_hash = array('created_at' => strtotime('-1 day'));
-        $meta->set($delete_hash)->save();
+        $user->delete_hash();
         $this->success();
       }
     } catch (\Exception $e) {
