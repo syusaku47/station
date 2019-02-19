@@ -28,5 +28,7 @@ class Model_Post extends Model_Base
     'deleted_at',
   ];
 
-
+  public static function get_contribution_history($id){
+    $query = \DB::query();
+  }
 }

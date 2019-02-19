@@ -157,4 +157,19 @@ class Controller_Contribution extends Controller_Base
       $this->body['errorlog'] = $e->getMessage();
     }
   }
+
+  public function get_contribution_history(){
+    $id = \Input::get('id');
+    try{
+      $this->data = \Model_Post::get_contribution_history($id);
+      $this->success();
+    }catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '投稿の取得に失敗しました。'
+      ];
+      $this->body['errorlog'] = $e->getMessage();
+    }
+  }
 }
