@@ -353,7 +353,7 @@ class Controller_User extends Controller_Base
       } else {
         $user->password = $password;
         $user->save();
-        $user->delete_hash();
+        $user->delete_hash($data['id']);
         $this->success();
       }
     } catch (\Exception $e) {

@@ -178,14 +178,14 @@ class Auth_User extends \Auth\Model\Auth_User
     $this->save();
   }
 
-  public function delete_hash()
+  public function delete_hash($id)
   {
-    $meta = Auth_Metadata::query()->select('value')
-      ->where('parent_id', $this->id)
+    $meta = Auth_Metadata::query()
+      ->where('parent_id', $id)
       ->where('key', 'hash')
       ->get_one();
-    $tmp = array('created_at', strtotime('-1 day'));
-    $meta->set($tmp)->save();
+    $meta->created_at = strtotime('-1 day');
+    $meta->save();
   }
 
   /*
