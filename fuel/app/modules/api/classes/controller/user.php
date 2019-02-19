@@ -180,8 +180,8 @@ class Controller_User extends Controller_Base
       $info['id'] = $user['id'];
       $info['nickname'] = $user['nickname'];
       $info['email'] = $user['email'];
-      $info['age'] = $user['age'];
-      $info['sex'] = $user['sex'];
+      $info['age'] = $user['age'] ? $user['age'] : '';
+      $info['sex'] = $user['sex'] ? $user['sex'] : '';
       $info['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
       $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
       $info['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
@@ -229,13 +229,25 @@ class Controller_User extends Controller_Base
   public function patch_change_password()
   {
     try {
-      $password = \Input::patch('new_password');
-      $new_password = \Auth::hash_password($password);
+      $old_password = \Input::patch('old_password');
+      $old_password_hash = \Auth::hash_password($old_password);
       $user = \Auth_User::get_user();
-      $user->password = $new_password;
-      $user->save();
-      unset($this->body['data']);
-      $this->success();
+      if($user->password == $old_password_hash){
+        $password = \Input::patch('new_password');
+        $new_password = \Auth::hash_password($password);
+        $user = \Auth_User::get_user();
+        $user->password = $new_password;
+        $user->save();
+        unset($this->body['data']);
+        $this->success();
+      }else{
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '現在のパスワードが間違っています。'
+        ];
+      }
+
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
