@@ -140,7 +140,7 @@ class Controller_User extends Controller_Base
           $this->failed();
           $this->error = [
             E::INVALID_REQUEST,
-            '年齢を正しく入力してください。'
+            '年齢を正しく入力してください'
           ];
           return;
         }else{
@@ -159,7 +159,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        '更新に失敗しました。'
+        '更新に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -172,7 +172,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::UNAUTHNTICATED,
-          '認証エラーです。'
+          '認証エラーです'
         ];
         return;
       }
@@ -193,7 +193,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::UNAUTHNTICATED,
-        '認証エラーです。'
+        '認証エラーです'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -207,7 +207,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした。'
+          '該当するユーザ情報がありませんでした'
         ];
         return;
       }
@@ -220,7 +220,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        '該当するユーザ情報がありませんでした。'
+        '該当するユーザ情報がありませんでした'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -244,7 +244,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          '現在のパスワードが間違っています。'
+          '現在のパスワードが間違っています'
         ];
       }
 
@@ -252,7 +252,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        'パスワードの変更に失敗しました。'
+        'パスワードの変更に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -277,7 +277,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::NOT_FOUND,
-        '該当するユーザ情報がありませんでした。'
+        '該当するユーザ情報がありませんでした'
       ];
       return;
     }
@@ -306,7 +306,7 @@ class Controller_User extends Controller_Base
       \Log::error($e->getMessage());
       $this->error = [
         E::INVALID_REQUEST,
-        'メールの送信に失敗しました。'
+        'メールの送信に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -319,7 +319,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
-        '有効ではありません。'
+        '有効ではありません'
       ];
     }
     $keys = ['id', 'nickname', 'email'];
@@ -347,7 +347,7 @@ class Controller_User extends Controller_Base
     ])) {
       $this->error = [
         E::INVALID_PARAM,
-        '不正なパラメータです。'
+        '不正なパラメータです'
       ];
       return;
     }
@@ -359,7 +359,7 @@ class Controller_User extends Controller_Base
       if ($user == null) {
         $this->error = [
           E::INVALID_PARAM,
-          '該当するユーザ情報がありませんでした。'
+          '該当するユーザ情報がありませんでした'
         ];
       } else {
         $user->password = $password;
@@ -372,7 +372,7 @@ class Controller_User extends Controller_Base
       \Log::error($e->getMessage());
       $this->error = [
         E::SERVER_ERROR,
-        '更新に失敗しました。'
+        '更新に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -386,7 +386,7 @@ class Controller_User extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした。'
+          '該当するユーザ情報がありませんでした'
         ];
         return;
       }
@@ -398,7 +398,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_REQUEST,
-        '削除に失敗しました。'
+        '削除に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -430,7 +430,7 @@ class Controller_User extends Controller_Base
       \Log::error($e->getMessage());
       $this->error = [
         E::SERVER_ERROR,
-        'ユーザ情報の取得に失敗しました。'
+        'ユーザ情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }

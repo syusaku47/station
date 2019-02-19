@@ -13,7 +13,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '場所情報の取得に失敗しました。'
+        '場所情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -29,7 +29,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '設備情報の取得に失敗しました。'
+        '設備情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -44,7 +44,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '路線情報の取得に失敗しました。'
+        '路線情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -60,7 +60,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '駅情報の取得に失敗しました。'
+        '駅情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -77,7 +77,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '駅情報の取得に失敗しました。'
+        '駅情報の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -120,14 +120,14 @@ class Controller_Contribution extends Controller_Base
             $this->failed();
             $this->error = [
               E::SERVER_ERROR,
-              'サムネイルの保存に失敗しました。'
+              'サムネイルの保存に失敗しました'
             ];
           }
         } else {
           $this->failed();
           $this->error = [
             E::SERVER_ERROR,
-            '不正なファイルです。'
+            '不正なファイルです'
           ];
         }
       }
@@ -152,7 +152,7 @@ class Controller_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '投稿に失敗しました。'
+        '投稿に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
@@ -161,13 +161,14 @@ class Controller_Contribution extends Controller_Base
   public function get_contribution_history(){
     $id = \Input::get('id');
     try{
-      $this->data = \Model_Post::get_contribution_history($id);
+      $history = \Model_Post::get_contribution_history($id);
+     $this->data = $history;
       $this->success();
     }catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '投稿の取得に失敗しました。'
+        '投稿の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
