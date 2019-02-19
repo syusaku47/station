@@ -1,7 +1,7 @@
 <?php
 
 namespace Api;
-
+use \Auth\Model\Auth_Metadata;
 class Controller_User extends Controller_Base
 {
   public function post_sign_up()
