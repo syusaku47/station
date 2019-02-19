@@ -302,8 +302,9 @@ class Controller_User extends Controller_Base
     }
   }
 
-  public function get_by_hash($hash)
+  public function get_by_hash()
   {
+    $hash = \Input::get('hash');
     if (!$user = \Auth_User::by_hash($hash)) {
       $this->failed();
       $this->error = [
