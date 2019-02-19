@@ -172,8 +172,8 @@ class Controller_User extends Controller_Base
       if (!$user = \Auth_User::get_user()) {
         $this->failed();
         $this->error = [
-          E::INVALID_REQUEST,
-          '該当するユーザ情報がありませんでした。'
+          E::UNAUTHNTICATED,
+          '認証エラーです。'
         ];
         return;
       }
@@ -193,8 +193,8 @@ class Controller_User extends Controller_Base
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
-        E::INVALID_REQUEST,
-        '該当するユーザ情報がありませんでした。'
+        E::UNAUTHNTICATED,
+        '認証エラーです。'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
