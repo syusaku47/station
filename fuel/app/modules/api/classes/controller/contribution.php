@@ -15,7 +15,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '場所情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -31,7 +31,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '設備情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -46,7 +46,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '路線情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -62,7 +62,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '駅情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -79,7 +79,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '駅情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -93,7 +93,7 @@ class Controller_Contribution extends Controller_Base
       $overview = \Input::post('overview');
       $remarks = \Input::post('remarks');
       $thumbnail_before = null;
-      if(!$user = \Auth_User::get_user()){
+      if (!$user = \Auth_User::get_user()) {
         $this->failed();
         $this->error = [
           E::UNAUTHNTICATED,
@@ -103,7 +103,7 @@ class Controller_Contribution extends Controller_Base
       }
       $contributor_id = $user->to_array()['id'];
 
-      if(!empty($_FILES)){
+      if (!empty($_FILES)) {
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
           'randomize' => true, //ファイル名をランダム生成
@@ -123,7 +123,7 @@ class Controller_Contribution extends Controller_Base
           // 正常保存された場合、アップロードファイル情報を取得
           if ($file) {
             //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
-            $thumbnail_before = \Uri::base(false).'contents/'.$file['saved_as'];
+            $thumbnail_before = \Uri::base(false) . 'contents/' . $file['saved_as'];
           } else {
             $this->failed();
             $this->error = [
@@ -162,12 +162,13 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '投稿に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
-  public function get_contribution_history(){
-    if(!$user = \Auth_User::get_user()){
+  public function get_contribution_history()
+  {
+    if (!$user = \Auth_User::get_user()) {
       $this->failed();
       $this->error = [
         E::UNAUTHNTICATED,
@@ -175,70 +176,117 @@ class Controller_Contribution extends Controller_Base
       ];
       return;
     }
-    try{
+    try {
       $history = \Model_Post::get_contribution_history($user->id);
-     $this->data = $history;
+      $this->data = $history;
       $this->success();
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
-  public function get_one(){
+  public function get_one()
+  {
     $id = \Input::get('contribution_id');
-    try{
+    try {
       $contribute = \Model_Post::get_contribution_by_id($id);
       $this->data = $contribute;
       $this->success();
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
-  public function get_other_contributes(){
-    if(!$user = \Auth_User::get_user()){
-      $this->failed();
-      $this->error = [
-        E::UNAUTHNTICATED,
-        '認証エラーです'
-      ];
-      return;
-    }
-    try{
-      $contributes = \Model_Post::get_other_contributes($user->id);
+  public function get_other_contributes()
+  {
+
+
+    try {
+      $status = \Input::get('status');
+      $station_id = \Input::get('station_id');
+
+      if (empty($status)) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_REQUEST,
+          'ステータスを入力してください'
+        ];
+        return;
+      }
+
+      if (empty($station_id)) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_REQUEST,
+          '駅を入力してください'
+        ];
+        return;
+      }
+
+      $contributes = \Model_Post::get_other_contributes($status, $station_id);
       $this->data = $contributes;
       $this->success();
-    }catch (\Exception $e) {
+
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
+
   }
 
-  public function get_information_list(){
-    try{
+  public function get_information_list()
+  {
+    try {
       $this->data = \Model_Information::find('all');
       $this->success();
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
         'お知らせの取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
+  public function patch_edit_remarks(){
+    $contribution_id = \Input::patch('contribution_id');
+    $remarks = \Input::patch('remarks');
+    try{
+      $contribute = \Model_Post::find($contribution_id);
+      if(!$contribute){
+        $this->failed();
+        $this->error = [
+          E::INVALID_REQUEST,
+          '該当する投稿がありませんでした'
+        ];
+        return;
+      }
+      $contribute->remarks = $remarks;
+      $contribute->save();
+      unset($this->body['data']);
+      $this->success();
+    }catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '更新に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 }

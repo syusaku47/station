@@ -48,13 +48,14 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
     return $query->execute();
   }
 
-  public static function get_other_contributes($contributor_id){
+  public static function get_other_contributes($status, $station_id){
     $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id, um.value as nickname, p.route_id as route_id, r.name as route_name, p.station_id as station_id,s.name as station_name,p.status as status,p.site_id as site_id,
 site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after as thumbnail_after,p.created_at as created_at,p.updated_at as updated_at 
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
-  inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id where um.key = \'nickname\' and contributor_id <> :contributor_id order by p.updated_at'
+  inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id where um.key = \'nickname\' and p.status = :status and p.station_id = :station_id order by p.updated_at'
     );
-    $query->bind('contributor_id',$contributor_id);
+    $query->bind('status',$status);
+    $query->bind('station_id',$station_id);
     return $query->execute();
   }
 }
