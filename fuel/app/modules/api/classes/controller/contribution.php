@@ -93,7 +93,14 @@ class Controller_Contribution extends Controller_Base
       $overview = \Input::post('overview');
       $remarks = \Input::post('remarks');
       $thumbnail_before = null;
-      $contributor_id = \Auth_User::get_user()->to_array()['id'];
+      if(!$user = \Auth_User::get_user()){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+      }
+      $contributor_id = $user->to_array()['id'];
 
       if(!empty($_FILES)){
         $config = array(
