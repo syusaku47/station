@@ -15,7 +15,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '場所情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -31,7 +31,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '設備情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -46,7 +46,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '路線情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -62,7 +62,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '駅情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -79,7 +79,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '駅情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -185,7 +185,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -201,7 +201,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -224,7 +224,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -238,7 +238,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         'お知らせの取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 }

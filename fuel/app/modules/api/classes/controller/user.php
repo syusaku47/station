@@ -46,7 +46,7 @@ class Controller_User extends Controller_Base
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
       $this->error = [
         E::INVALID_REQUEST,
         $e->getMessage()
@@ -101,7 +101,7 @@ class Controller_User extends Controller_Base
         E::UNAUTHNTICATED,
         'メールアドレスまたはパスワードが違います'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -161,7 +161,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '更新に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -195,7 +195,7 @@ class Controller_User extends Controller_Base
         E::UNAUTHNTICATED,
         '認証エラーです'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -222,7 +222,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '該当するユーザ情報がありませんでした'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -254,7 +254,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         'パスワードの変更に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -308,7 +308,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         'メールの送信に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -374,7 +374,7 @@ class Controller_User extends Controller_Base
         E::SERVER_ERROR,
         '更新に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -400,7 +400,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '削除に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -432,7 +432,7 @@ class Controller_User extends Controller_Base
         E::SERVER_ERROR,
         'ユーザ情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
