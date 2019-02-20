@@ -93,14 +93,7 @@ class Controller_Contribution extends Controller_Base
       $overview = \Input::post('overview');
       $remarks = \Input::post('remarks');
       $thumbnail_before = null;
-      if(!$user = \Auth_User::get_user()){
-        $this->failed();
-        $this->error = [
-          E::UNAUTHNTICATED,
-          '認証エラーです'
-        ];
-      }
-      $contributor_id = $user->id;
+      $contributor_id = \Auth_User::get_user()->to_array()['id'];
 
       if(!empty($_FILES)){
         $config = array(
@@ -117,11 +110,8 @@ class Controller_Contribution extends Controller_Base
         mb_convert_variables('UTF-8', 'UTF-8', $config);
         \Upload::process($config);
         if (\Upload::is_valid()) {
-          \Log::error('before file save');
           \Upload::save();
-          \Log::error(' file save finished');
           $file = \Upload::get_files()[0];
-          \Log::error(' got file');
           // 正常保存された場合、アップロードファイル情報を取得
           if ($file) {
             //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
