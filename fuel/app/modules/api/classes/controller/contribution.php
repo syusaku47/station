@@ -99,6 +99,7 @@ class Controller_Contribution extends Controller_Base
           E::UNAUTHNTICATED,
           '認証エラーです'
         ];
+        return;
       }
       $contributor_id = $user->to_array()['id'];
 
@@ -161,7 +162,7 @@ class Controller_Contribution extends Controller_Base
         E::SERVER_ERROR,
         '投稿に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage();
+      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
     }
   }
 
@@ -172,6 +173,7 @@ class Controller_Contribution extends Controller_Base
         E::UNAUTHNTICATED,
         '認証エラーです'
       ];
+      return;
     }
     try{
       $history = \Model_Post::get_contribution_history($user->id);
@@ -210,6 +212,7 @@ class Controller_Contribution extends Controller_Base
         E::UNAUTHNTICATED,
         '認証エラーです'
       ];
+      return;
     }
     try{
       $contributes = \Model_Post::get_other_contributes($user->id);
