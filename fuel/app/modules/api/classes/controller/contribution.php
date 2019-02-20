@@ -93,7 +93,14 @@ class Controller_Contribution extends Controller_Base
       $overview = \Input::post('overview');
       $remarks = \Input::post('remarks');
       $thumbnail_before = null;
-      $contributor_id = \Auth_User::get_user()->to_array()['id'];
+      if(!$user = \Auth_User::get_user()){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+      }
+      $contributor_id = $user->id;
 
       if(!empty($_FILES)){
         $config = array(
@@ -110,8 +117,11 @@ class Controller_Contribution extends Controller_Base
         mb_convert_variables('UTF-8', 'UTF-8', $config);
         \Upload::process($config);
         if (\Upload::is_valid()) {
+          \Log::error('before file save');
           \Upload::save();
+          \Log::error(' file save finished');
           $file = \Upload::get_files()[0];
+          \Log::error(' got file');
           // 正常保存された場合、アップロードファイル情報を取得
           if ($file) {
             //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
@@ -159,9 +169,15 @@ class Controller_Contribution extends Controller_Base
   }
 
   public function get_contribution_history(){
-    $id = \Input::get('id');
+    if(!$user = \Auth_User::get_user()){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+    }
     try{
-      $history = \Model_Post::get_contribution_history($id);
+      $history = \Model_Post::get_contribution_history($user->id);
      $this->data = $history;
       $this->success();
     }catch (\Exception $e) {
@@ -169,6 +185,58 @@ class Controller_Contribution extends Controller_Base
       $this->error = [
         E::SERVER_ERROR,
         '投稿の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage();
+    }
+  }
+
+  public function get_one(){
+    $id = \Input::get('contribution_id');
+    try{
+      $contribute = \Model_Post::get_contribution_by_id($id);
+      $this->data = $contribute;
+      $this->success();
+    }catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '投稿の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage();
+    }
+  }
+
+  public function get_other_contributes(){
+    if(!$user = \Auth_User::get_user()){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+    }
+    try{
+      $contributes = \Model_Post::get_other_contributes($user->id);
+      $this->data = $contributes;
+      $this->success();
+    }catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '投稿の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage();
+    }
+  }
+
+  public function get_information_list(){
+    try{
+      $this->data = \Model_Information::find('all');
+      $this->success();
+    }catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'お知らせの取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage();
     }
