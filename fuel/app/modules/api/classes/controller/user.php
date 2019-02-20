@@ -284,7 +284,7 @@ class Controller_User extends Controller_Base
 
     try {
 
-      $user->create_hash();
+      $user->create_hash($user->id);
       $path = \Input::post('path');
 
       $email_user = [];

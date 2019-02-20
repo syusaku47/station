@@ -172,10 +172,17 @@ class Auth_User extends \Auth\Model\Auth_User
    *
    * ***************************************************
    */
-  public function create_hash()
+  public function create_hash($id)
   {
     $this->hash =  Str::random('alnum', 64);
     $this->save();
+    $meta = Auth_Metadata::query()
+      ->where('parent_id', $id)
+      ->where('key', 'hash')
+      ->get_one();
+    $meta->created_at = strtotime('now');
+    $meta->save();
+
   }
 
   public function delete_hash($id)
