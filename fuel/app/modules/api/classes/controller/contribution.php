@@ -210,7 +210,6 @@ class Controller_Contribution extends Controller_Base
   public function get_other_contributes()
   {
 
-
     try {
       $status = \Input::get('status');
       $station_id = \Input::get('station_id');
@@ -251,7 +250,7 @@ class Controller_Contribution extends Controller_Base
   public function get_information_list()
   {
     try {
-      $this->data = \Model_Information::find('all');
+      $this->data = \Model_Information::find('all', array('order_by' => 'date'));
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
