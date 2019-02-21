@@ -34,14 +34,9 @@ class Controller_User extends Controller_Base
         return;
       }
 
-      if (!$data = $this->verify([
-        'password' => [
-          'label' => 'パスワード',
-          'validation' => [
-            'required'
-          ]
-        ],
-      ])) {
+
+      $pwlength = strlen(\Input::post('password'));
+      if ($pwlength == 0) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -50,8 +45,7 @@ class Controller_User extends Controller_Base
         return;
       }
 
-      $pwlength = strlen($data['password']);
-      if($pwlength < 8 || $pwlength > 16){
+      if ($pwlength < 8 || $pwlength > 16) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -89,7 +83,7 @@ class Controller_User extends Controller_Base
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
       $this->error = [
         E::INVALID_REQUEST,
         $e->getMessage()
@@ -144,7 +138,7 @@ class Controller_User extends Controller_Base
         E::UNAUTHNTICATED,
         'メールアドレスまたはパスワードが違います'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -173,20 +167,36 @@ class Controller_User extends Controller_Base
       $age = \Input::patch('age');
       $sex = \Input::patch('sex');
       if (!empty($email)) {
+        if (!$data = $this->verify([
+          'email' => [
+            'label' => 'メールアドレス',
+            'validation' => [
+              'required',
+              'valid_email'
+            ]
+          ]
+        ])) {
+          $this->failed();
+          $this->error = [
+            E::UNAUTHNTICATED,
+            'メールアドレスの形式が不正です'
+          ];
+          return;
+        }
         $params['email'] = $email;
       }
       if (!empty($nickname)) {
         $params['nickname'] = $nickname;
       }
       if (!empty($age)) {
-        if(!is_numeric($age)){
+        if (!is_numeric($age)) {
           $this->failed();
           $this->error = [
             E::INVALID_REQUEST,
             '年齢を正しく入力してください'
           ];
           return;
-        }else{
+        } else {
           $params['age'] = $age;
         }
       }
@@ -204,7 +214,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '更新に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -225,10 +235,10 @@ class Controller_User extends Controller_Base
       $info['email'] = $user['email'];
       $info['age'] = $user['age'] ? $user['age'] : '';
       $info['sex'] = $user['sex'] ? $user['sex'] : '';
-      $info['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
-      $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
-      $info['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
-      $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s",$user['updated_at']);
+      $info['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s", $user['last_login']);
+      $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s", $user['previous_login']);
+      $info['created_at'] = date("Y-m-d H:i:s", $user['created_at']);
+      $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s", $user['updated_at']);
 
       $this->success();
       $this->data = $info;
@@ -238,7 +248,7 @@ class Controller_User extends Controller_Base
         E::UNAUTHNTICATED,
         '認証エラーです'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -265,21 +275,15 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '該当するユーザ情報がありませんでした'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
   public function patch_change_password()
   {
     try {
-      if (!$data = $this->verify([
-        'password' => [
-          'label' => 'パスワード',
-          'validation' => [
-            'required'
-          ]
-        ],
-      ])) {
+      $pwlength = strlen(\Input::patch('new_password'));
+      if ($pwlength == 0) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -288,8 +292,7 @@ class Controller_User extends Controller_Base
         return;
       }
 
-      $pwlength = strlen($data['password']);
-      if($pwlength < 8 || $pwlength > 16){
+      if ($pwlength < 8 || $pwlength > 16) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -297,10 +300,11 @@ class Controller_User extends Controller_Base
         ];
         return;
       }
+
       $old_password = \Input::patch('old_password');
       $old_password_hash = \Auth::hash_password($old_password);
       $user = \Auth_User::get_user();
-      if($user->password == $old_password_hash){
+      if ($user->password == $old_password_hash) {
         $password = \Input::patch('new_password');
         $new_password = \Auth::hash_password($password);
         $user = \Auth_User::get_user();
@@ -308,7 +312,7 @@ class Controller_User extends Controller_Base
         $user->save();
         unset($this->body['data']);
         $this->success();
-      }else{
+      } else {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -322,7 +326,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         'パスワードの変更に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -376,7 +380,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         'メールの送信に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -405,13 +409,17 @@ class Controller_User extends Controller_Base
 
     if (!$data = $this->verify([
       'id',
-      'password' => [
-        'label' => 'パスワード',
-        'validation' => [
-          'required'
-        ]
-      ],
     ])) {
+      $this->failed();
+      $this->error = [
+        E::INVALID_PARAM,
+        '不正なパラメータです'
+      ];
+      return;
+    }
+
+    $pwlength = strlen(\Input::post('password'));
+    if ($pwlength == 0) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
@@ -419,9 +427,7 @@ class Controller_User extends Controller_Base
       ];
       return;
     }
-
-    $pwlength = strlen($data['password']);
-    if($pwlength < 8 || $pwlength > 16){
+    if ($pwlength < 8 || $pwlength > 16) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
@@ -430,7 +436,7 @@ class Controller_User extends Controller_Base
       return;
     }
 
-    $password = \Auth::hash_password($data['password']);
+    $password = \Auth::hash_password(\Input::post('password'));
 
     try {
       $user = \Auth_User::find($data['id']);
@@ -452,7 +458,7 @@ class Controller_User extends Controller_Base
         E::SERVER_ERROR,
         '更新に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -478,7 +484,7 @@ class Controller_User extends Controller_Base
         E::INVALID_REQUEST,
         '削除に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
@@ -486,8 +492,8 @@ class Controller_User extends Controller_Base
   {
     try {
       $list = array();
-      $users  = \Auth_User::find('all');
-      foreach ($users as $user){
+      $users = \Auth_User::find('all');
+      foreach ($users as $user) {
         $user->to_array();
         $tmp = array();
         $tmp['id'] = $user['id'];
@@ -495,10 +501,10 @@ class Controller_User extends Controller_Base
         $tmp['email'] = $user['email'];
         $tmp['age'] = $user['age'] ? $user['age'] : '';
         $tmp['sex'] = $user['sex'] ? $user['sex'] : '';
-        $tmp['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s",$user['last_login']);
-        $tmp['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s",$user['previous_login']);
-        $tmp['created_at'] = date("Y-m-d H:i:s",$user['created_at']);
-        $tmp['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s",$user['updated_at']);
+        $tmp['last_login'] = $user['last_login'] == '0' ? $user['last_login'] : date("Y-m-d H:i:s", $user['last_login']);
+        $tmp['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s", $user['previous_login']);
+        $tmp['created_at'] = date("Y-m-d H:i:s", $user['created_at']);
+        $tmp['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s", $user['updated_at']);
         $list[] = $tmp;
       }
 
@@ -510,7 +516,7 @@ class Controller_User extends Controller_Base
         E::SERVER_ERROR,
         'ユーザ情報の取得に失敗しました'
       ];
-      $this->body['errorlog'] = $e->getMessage() .' '.$e->getFile().' '.$e->getLine();
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
 
