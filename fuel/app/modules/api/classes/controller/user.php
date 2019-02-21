@@ -6,6 +6,14 @@ class Controller_User extends Controller_Base
   public function post_sign_up()
   {
     try {
+      if ($user = \Auth_User::by_email(\Input::post('email'))) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '既に登録しているメールアドレスです'
+        ];
+        return;
+      }
       if (!$data = $this->verify([
         'username' => [
           'label' => 'ユーザ名',
