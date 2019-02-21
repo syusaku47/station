@@ -15,16 +15,40 @@ class Controller_User extends Controller_Base
               255
             ]
           ]
-        ],
+        ]
+      ])) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'ユーザ名を正しく入力してください'
+        ];
+
+        return;
+      }
+
+      if (!$data = $this->verify([
         'password' => [
           'label' => 'パスワード',
           'validation' => [
             'required',
+            'min_length' => [
+              8
+            ],
             'max_length' => [
-              255
+              16
             ]
           ]
         ],
+      ])) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'パスワードは8文字以上16字以下で入力してください'
+        ];
+        return;
+      }
+
+      if (!$data = $this->verify([
         'email' => [
           'label' => 'メールアドレス',
           'validation' => [
@@ -33,8 +57,15 @@ class Controller_User extends Controller_Base
           ]
         ]
       ])) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'メールアドレスの形式が不正です'
+        ];
+
         return;
       }
+
       \Auth::create_user(
         \Input::post('username'),
         \Input::post('password'),
@@ -229,6 +260,27 @@ class Controller_User extends Controller_Base
   public function patch_change_password()
   {
     try {
+      if (!$data = $this->verify([
+        'password' => [
+          'label' => 'パスワード',
+          'validation' => [
+            'required',
+            'min_length' => [
+              8
+            ],
+            'max_length' => [
+              16
+            ]
+          ]
+        ],
+      ])) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'パスワードは8文字以上16字以下で入力してください'
+        ];
+        return;
+      }
       $old_password = \Input::patch('old_password');
       $old_password_hash = \Auth::hash_password($old_password);
       $user = \Auth_User::get_user();
@@ -341,13 +393,18 @@ class Controller_User extends Controller_Base
         'label' => 'パスワード',
         'validation' => [
           'required',
-          'valid_password'
+          'min_length' => [
+            8
+          ],
+          'max_length' => [
+            16
+          ]
         ]
       ]
     ])) {
       $this->error = [
         E::INVALID_PARAM,
-        '不正なパラメータです'
+        'パスワードは8文字以上16字以下で入力してください'
       ];
       return;
     }
