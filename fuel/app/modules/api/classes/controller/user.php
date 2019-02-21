@@ -38,20 +38,24 @@ class Controller_User extends Controller_Base
         'password' => [
           'label' => 'パスワード',
           'validation' => [
-            'required',
-            'min_length' => [
-              8
-            ],
-            'max_length' => [
-              16
-            ]
+            'required'
           ]
         ],
       ])) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          'パスワードは8文字以上16字以下で入力してください'
+          'パスワードを入力してください'
+        ];
+        return;
+      }
+
+      $pwlength = strlen($data['password']);
+      if($pwlength < 8 || $pwlength > 16){
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'パスワードは8文字以上16文字以内で入力してください'
         ];
         return;
       }
@@ -272,20 +276,24 @@ class Controller_User extends Controller_Base
         'password' => [
           'label' => 'パスワード',
           'validation' => [
-            'required',
-            'min_length' => [
-              8
-            ],
-            'max_length' => [
-              16
-            ]
+            'required'
           ]
         ],
       ])) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          'パスワードは8文字以上16字以下で入力してください'
+          'パスワードを入力してください'
+        ];
+        return;
+      }
+
+      $pwlength = strlen($data['password']);
+      if($pwlength < 8 || $pwlength > 16){
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'パスワードは8文字以上16文字以内で入力してください'
         ];
         return;
       }
@@ -400,19 +408,24 @@ class Controller_User extends Controller_Base
       'password' => [
         'label' => 'パスワード',
         'validation' => [
-          'required',
-          'min_length' => [
-            8
-          ],
-          'max_length' => [
-            16
-          ]
+          'required'
         ]
-      ]
+      ],
     ])) {
+      $this->failed();
       $this->error = [
         E::INVALID_PARAM,
-        'パスワードは8文字以上16字以下で入力してください'
+        'パスワードを入力してください'
+      ];
+      return;
+    }
+
+    $pwlength = strlen($data['password']);
+    if($pwlength < 8 || $pwlength > 16){
+      $this->failed();
+      $this->error = [
+        E::INVALID_PARAM,
+        'パスワードは8文字以上16文字以内で入力してください'
       ];
       return;
     }
