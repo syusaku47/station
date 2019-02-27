@@ -89,7 +89,9 @@ class Controller_Contribution extends Controller_Base
       $route_id = \Input::post('route_id');
       $station_id = \Input::post('station_id');
       $site_id = \Input::post('site_id');
+      $site_text = \Input::post('site_text');
       $facility_id = \Input::post('facility_id');
+      $facility_text = \Input::post('facility_text');
       $overview = \Input::post('overview');
       $remarks = \Input::post('remarks');
       $thumbnail_before = null;
@@ -147,7 +149,9 @@ class Controller_Contribution extends Controller_Base
       $post->station_id = $station_id;
       $post->status = '未対応';
       $post->site_id = $site_id;
+      $post->site_text = $site_text;
       $post->facility_id = $facility_id;
+      $post->facility_text = $facility_text;
       $post->overview = $overview;
       $post->remarks = $remarks;
       $post->thumbnail_before = $thumbnail_before;
