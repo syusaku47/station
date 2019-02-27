@@ -12,11 +12,16 @@ class Model_Post extends Model_Base
     'station_id',
     'status',
     'site_id',
+    'site_text',
     'facility_id',
+    'facility_text',
     'overview',
     'remarks',
+    'repairer_id',
     'thumbnail_before',
-    'thumbnail_after',
+    'thumbnail_after1',
+    'thumbnail_after2',
+    'thumbnail_after3',
     'created_at',
     'updated_at',
     'deleted_at',
@@ -30,7 +35,7 @@ class Model_Post extends Model_Base
 
   public static function get_contribution_history($contributor_id){
     $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id, um.value as nickname, p.route_id as route_id, r.name as route_name, p.station_id as station_id,s.name as station_name,p.status as status,p.site_id as site_id,
-site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after as thumbnail_after,p.created_at as created_at,p.updated_at as updated_at 
+site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after1 as thumbnail_after1,p.created_at as created_at,p.updated_at as updated_at 
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
   inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id where um.key = \'nickname\' and contributor_id = :contributor_id '
 );
@@ -40,7 +45,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
 
   public static function get_contribution_by_id($contribution_id){
     $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id, um.value as nickname, p.route_id as route_id, r.name as route_name, p.station_id as station_id,s.name as station_name,p.status as status,p.site_id as site_id,
-site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after as thumbnail_after,p.created_at as created_at,p.updated_at as updated_at 
+site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after1 as thumbnail_after1,p.created_at as created_at,p.updated_at as updated_at 
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
   inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id where um.key = \'nickname\' and p.id = :contribution_id '
     );
@@ -50,7 +55,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
 
   public static function get_other_contributes($status, $station_id){
     $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id, um.value as nickname, p.route_id as route_id, r.name as route_name, p.station_id as station_id,s.name as station_name,p.status as status,p.site_id as site_id,
-site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after as thumbnail_after,p.created_at as created_at,p.updated_at as updated_at 
+site.name as site_name,p.facility_id as facility_id, f.name as facility_name, p.overview as overview,p.remarks as remarks,p.thumbnail_before as thumbnail_before,p.thumbnail_after1 as thumbnail_after1,p.created_at as created_at,p.updated_at as updated_at 
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
   inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id where um.key = \'nickname\' and p.status = :status and p.station_id = :station_id order by p.updated_at'
     );
