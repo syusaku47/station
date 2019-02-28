@@ -9,7 +9,7 @@ class Controller_User extends Controller_Base
 
 
       $username = \Input::post('username');
-      if ($username == null) {
+      if (mb_strlen($username) == 0) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -19,15 +19,15 @@ class Controller_User extends Controller_Base
         return;
       }
 
-//      if (mb_strlen($username) > 20) {
-//      $this->failed();
-//      $this->error = [
-//        E::INVALID_PARAM,
-//        'ユーザ名は20文字以内で入力してください'
-//      ];
-//
-//      return;
-//    }
+      if (mb_strlen($username) > 20) {
+      $this->failed();
+      $this->error = [
+        E::INVALID_PARAM,
+        'ユーザ名は20文字以内で入力してください'
+      ];
+
+      return;
+    }
 
 
       $password = \Input::post('password');
@@ -169,6 +169,24 @@ class Controller_User extends Controller_Base
 
       $params = array();
       $nickname = \Input::patch('nickname');
+      if (mb_strlen($nickname) == 0) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'ユーザ名を入力してください'
+        ];
+
+        return;
+      }
+      if (mb_strlen($nickname) > 20) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'ユーザ名は20文字以内で入力してください'
+        ];
+
+        return;
+      }
       $age = \Input::patch('age');
       $sex = \Input::patch('sex');
       if (!empty($email)) {
@@ -418,7 +436,7 @@ class Controller_User extends Controller_Base
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
-        '不正なパラメータです'
+        '不正なidです'
       ];
       return;
     }

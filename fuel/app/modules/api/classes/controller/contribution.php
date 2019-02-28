@@ -90,10 +90,42 @@ class Controller_Contribution extends Controller_Base
       $station_id = \Input::post('station_id');
       $site_id = \Input::post('site_id');
       $site_text = \Input::post('site_text');
+      if (mb_strlen($site_text) > 100) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '場所情報は100字以内で入力してください'
+        ];
+        return;
+      }
       $facility_id = \Input::post('facility_id');
       $facility_text = \Input::post('facility_text');
+      if (mb_strlen($facility_text) > 100) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '設備情報は100字以内で入力してください'
+        ];
+        return;
+      }
       $overview = \Input::post('overview');
+      if (mb_strlen($overview) > 100) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '状況は100字以内で入力してください'
+        ];
+        return;
+      }
       $remarks = \Input::post('remarks');
+      if (mb_strlen($remarks) > 100) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '備考は100字以内で入力してください'
+        ];
+        return;
+      }
       $thumbnail_before = null;
       if (!$user = \Auth_User::get_user()) {
         $this->failed();
@@ -270,6 +302,14 @@ class Controller_Contribution extends Controller_Base
   public function patch_edit_remarks(){
     $contribution_id = \Input::patch('contribution_id');
     $remarks = \Input::patch('remarks');
+    if (mb_strlen($remarks) > 100) {
+      $this->failed();
+      $this->error = [
+        E::INVALID_PARAM,
+        '備考は100字以内で入力してください'
+      ];
+      return;
+    }
     try{
       $contribute = \Model_Post::find($contribution_id);
       if(!$contribute){
