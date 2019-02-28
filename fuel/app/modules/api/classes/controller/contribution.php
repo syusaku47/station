@@ -113,7 +113,7 @@ class Controller_Contribution extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          '状況は100字以内で入力してください'
+          '状況は200字以内で入力してください'
         ];
         return;
       }
@@ -122,7 +122,7 @@ class Controller_Contribution extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          '備考は100字以内で入力してください'
+          '備考は200字以内で入力してください'
         ];
         return;
       }
@@ -302,11 +302,11 @@ class Controller_Contribution extends Controller_Base
   public function patch_edit_remarks(){
     $contribution_id = \Input::patch('contribution_id');
     $remarks = \Input::patch('remarks');
-    if (mb_strlen($remarks) > 100) {
+    if (mb_strlen($remarks) > 200) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
-        '備考は100字以内で入力してください'
+        '備考は200字以内で入力してください'
       ];
       return;
     }
