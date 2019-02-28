@@ -154,7 +154,7 @@ class Controller_Contribution extends Controller_Base
       $post->facility_text = $facility_text;
       $post->overview = $overview;
       $post->remarks = $remarks;
-      $post->repairer_id = 0;
+      $post->repairer_id = 1;
       $post->thumbnail_before = $thumbnail_before;
       $post->save();
       unset($this->body['data']);
