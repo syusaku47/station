@@ -7,25 +7,9 @@ class Controller_User extends Controller_Base
   {
     try {
 
-      if ($user = \Auth_User::by_email(\Input::post('email'))) {
-        $this->failed();
-        $this->error = [
-          E::INVALID_PARAM,
-          '既に登録しているメールアドレスです'
-        ];
-        return;
-      }
-      if (!$data = $this->verify([
-        'username' => [
-          'label' => 'ユーザ名',
-          'validation' => [
-            'required',
-            'max_length' => [
-              255
-            ]
-          ]
-        ]
-      ])) {
+
+      $username = \Input::post('username');
+      if ($username == null) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -35,8 +19,19 @@ class Controller_User extends Controller_Base
         return;
       }
 
+//      if (mb_strlen($username) > 20) {
+//      $this->failed();
+//      $this->error = [
+//        E::INVALID_PARAM,
+//        'ユーザ名は20文字以内で入力してください'
+//      ];
+//
+//      return;
+//    }
 
-      $pwlength = strlen(\Input::post('password'));
+
+      $password = \Input::post('password');
+      $pwlength = strlen($password);
       if ($pwlength == 0) {
         $this->failed();
         $this->error = [
@@ -73,12 +68,21 @@ class Controller_User extends Controller_Base
         return;
       }
 
+      if ($user = \Auth_User::by_email(\Input::post('email'))) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '既に登録しているメールアドレスです'
+        ];
+        return;
+      }
+
       \Auth::create_user(
-        \Input::post('username'),
-        \Input::post('password'),
-        \Input::post('email'),
+        $username,
+        $password,
+        $data['email'],
         1,
-        array('nickname' => \Input::post('username'))
+        array('nickname' => $username)
       );
       unset($this->body['data']);
       $this->success();
@@ -121,7 +125,7 @@ class Controller_User extends Controller_Base
 
         return;
       }
-      if (\Auth::login(\Input::post('email'), \Input::post('password'))) {
+      if (\Auth::login($data['email'], \Input::post('password'))) {
         unset($this->body['data']);
         $this->success();
         return;
