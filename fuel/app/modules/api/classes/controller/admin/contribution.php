@@ -213,7 +213,7 @@ class Controller_Admin_Contribution extends Controller_Base
   public function get_information_list()
   {
     try {
-      //$this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
+      $this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
       if (!$data = $this->verify([
         'q' => [
           'validation' => [
@@ -224,8 +224,6 @@ class Controller_Admin_Contribution extends Controller_Base
         ],
         'limit',
         'p',
-        'sort',
-        'date',
       ])) {
         return;
       }

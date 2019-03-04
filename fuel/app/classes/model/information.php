@@ -2,7 +2,7 @@
 
 class Model_Information extends Model_Base
 {
-  use Model_Base_Plugin_Search;
+  //use Model_Base_Plugin_Search;
 
   protected static $_table_name = 'informations';
 
@@ -22,5 +22,33 @@ class Model_Information extends Model_Base
     'updated_at',
     'deleted_at',
   ];
+
+  public static function search($input, $to_array = false)
+  {
+
+    $limit = min((int) @$input['limit'] ?: 50, 10000);
+    $offset = ((is_numeric(@$input['p']) ? $input['p'] : 1) - 1) * $limit;
+    $count = \DB::count_records('informations');
+    $list = self::query()->order_by('date', 'desc')
+      ->rows_limit($limit)
+      ->rows_offset($offset)
+      ->get();
+
+    if ($to_array) {
+      // $_to_array_exclude適用
+      $list = array_map(function ($model) {
+        return $model->to_array();
+      }, $list);
+    }
+
+    return (object) [
+      'count' => $count,
+      'limit' => $limit,
+      'offset' => $offset,
+      'from' => $count ? $offset + 1 : 0,
+      'to' => min($offset + $limit, $count),
+      'list' => $list
+    ];
+  }
 
 }
