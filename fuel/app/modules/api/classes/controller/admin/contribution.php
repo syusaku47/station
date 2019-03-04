@@ -213,7 +213,6 @@ class Controller_Admin_Contribution extends Controller_Base
   public function get_information_list()
   {
     try {
-      $this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
       if (!$data = $this->verify([
         'limit',
         'p',
@@ -324,8 +323,14 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function get_contribution_list($order = 'desc'){
     try {
+      if (!$data = $this->verify([
+        'limit',
+        'p',
+      ])) {
+        return;
+      }
       $order = \Input::get('order');
-      $contributes = \Model_Post::get_contribution_list($order);
+      $contributes = \Model_Post::get_contribution_list($data,$order);
       $this->data = $contributes;
       $this->success();
 
