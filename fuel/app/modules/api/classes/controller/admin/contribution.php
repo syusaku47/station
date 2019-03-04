@@ -2,7 +2,7 @@
 
 namespace Api;
 
-class Controller_Contribution extends Controller_Base
+class Controller_Admin_Contribution extends Controller_Base
 {
   public function get_site_list()
   {
@@ -90,6 +90,7 @@ class Controller_Contribution extends Controller_Base
       $station_id = \Input::post('station_id');
       $site_id = \Input::post('site_id');
       $site_text = \Input::post('site_text');
+      $parent_id = \Input::post('parent_id');
       if (mb_strlen($site_text) > 100) {
         $this->failed();
         $this->error = [
@@ -113,7 +114,7 @@ class Controller_Contribution extends Controller_Base
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          '事象は200字以内で入力してください'
+          '状況は200字以内で入力してください'
         ];
         return;
       }
@@ -176,8 +177,8 @@ class Controller_Contribution extends Controller_Base
 
 
       $post = \Model_Post::forge();
-      $post->child_id = 0;
       $post->contributor_id = $contributor_id;
+      $post->child_id = 0;
       $post->route_id = $route_id;
       $post->station_id = $station_id;
       $post->status = '未対応';
@@ -189,6 +190,11 @@ class Controller_Contribution extends Controller_Base
       $post->remarks = $remarks;
       $post->repairer_id = 1;
       $post->thumbnail_before = $thumbnail_before;
+      if (!empty($parent_id)) {
+        $post->parent_id = $parent_id;
+        $post->child_id = \Model_Post::numbering_child_id($parent_id);
+        \Log::error('child_id : ' . $post->child_id);
+      }
       $post->save();
       unset($this->body['data']);
       $this->success();
@@ -204,91 +210,27 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
-  public function get_contribution_history()
-  {
-    if (!$user = \Auth_User::get_user()) {
-      $this->failed();
-      $this->error = [
-        E::UNAUTHNTICATED,
-        '認証エラーです'
-      ];
-      return;
-    }
-    try {
-      $history = \Model_Post::get_contribution_history($user->id);
-      $this->data = $history;
-      $this->success();
-    } catch (\Exception $e) {
-      $this->failed();
-      $this->error = [
-        E::SERVER_ERROR,
-        '投稿の取得に失敗しました'
-      ];
-      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
-    }
-  }
-
-  public function get_one()
-  {
-    $id = \Input::get('contribution_id');
-    try {
-      $contribute = \Model_Post::get_contribution_by_id($id);
-      $this->data = $contribute;
-      $this->success();
-    } catch (\Exception $e) {
-      $this->failed();
-      $this->error = [
-        E::SERVER_ERROR,
-        '投稿の取得に失敗しました'
-      ];
-      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
-    }
-  }
-
-  public function get_other_contributes()
-  {
-
-    try {
-      $status = \Input::get('status');
-      $station_id = \Input::get('station_id');
-
-      if (empty($status)) {
-        $this->failed();
-        $this->error = [
-          E::INVALID_REQUEST,
-          'ステータスを入力してください'
-        ];
-        return;
-      }
-
-      if (empty($station_id)) {
-        $this->failed();
-        $this->error = [
-          E::INVALID_REQUEST,
-          '駅を入力してください'
-        ];
-        return;
-      }
-
-      $contributes = \Model_Post::get_other_contributes($status, $station_id);
-      $this->data = $contributes;
-      $this->success();
-
-    } catch (\Exception $e) {
-      $this->failed();
-      $this->error = [
-        E::SERVER_ERROR,
-        '投稿の取得に失敗しました'
-      ];
-      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
-    }
-
-  }
-
   public function get_information_list()
   {
     try {
-      $this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
+      //$this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
+      if (!$data = $this->verify([
+        'q' => [
+          'validation' => [
+            'max_length' => [
+              255
+            ]
+          ]
+        ],
+        'limit',
+        'p',
+        'sort',
+        'date',
+      ])) {
+        return;
+      }
+
+      $this->list = \Model_Information::search($data);
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
@@ -300,20 +242,15 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
-  public function patch_edit_remarks(){
+  public function patch_edit()
+  {
     $contribution_id = \Input::patch('contribution_id');
-    $remarks = \Input::patch('remarks');
-    if (mb_strlen($remarks) > 200) {
-      $this->failed();
-      $this->error = [
-        E::INVALID_PARAM,
-        '備考は200字以内で入力してください'
-      ];
-      return;
-    }
-    try{
+    $status = \Input::patch('status');
+    $repairer_id = \Input::patch('repairer_id');
+
+    try {
       $contribute = \Model_Post::find($contribution_id);
-      if(!$contribute){
+      if (!$contribute) {
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
@@ -321,6 +258,7 @@ class Controller_Contribution extends Controller_Base
         ];
         return;
       }
+
       if (!empty($_FILES)) {
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
@@ -359,11 +297,31 @@ class Controller_Contribution extends Controller_Base
         }
       }
 
-      $contribute->remarks = $remarks;
+      $needs_send_mail = false;
+      $contribute->status = $status;
+      if ($contribute->repairer_id != $repairer_id) {
+        $needs_send_mail = true;
+      }
+      $contribute->repairer_id = $repairer_id;
       $contribute->save();
+
+      if ($needs_send_mail) {
+        $contribution_url = \Input::patch('contribution_url');
+        $tmp = \Model_Repairer::query()->select('email')->where('id', '=', $repairer_id)->get_one()->to_array();
+        $email = $tmp['email'];
+        $info['url'] = $contribution_url;
+
+        \Email::forge()
+          ->from('info')
+          ->to($email)
+          ->subject('【みんなの駅】担当に設定されました')
+          ->body(\View::forge('to_repairer', $info))
+          ->send();
+      }
+
       unset($this->body['data']);
       $this->success();
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
