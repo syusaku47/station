@@ -215,13 +215,6 @@ class Controller_Admin_Contribution extends Controller_Base
     try {
       $this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
       if (!$data = $this->verify([
-        'q' => [
-          'validation' => [
-            'max_length' => [
-              255
-            ]
-          ]
-        ],
         'limit',
         'p',
       ])) {
@@ -328,4 +321,23 @@ class Controller_Admin_Contribution extends Controller_Base
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
+
+  public function get_contribution_list($order = 'desc'){
+    try {
+      $order = \Input::get('order');
+      $contributes = \Model_Post::get_contribution_list($order);
+      $this->data = $contributes;
+      $this->success();
+
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '投稿の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+
+  }
+
 }
