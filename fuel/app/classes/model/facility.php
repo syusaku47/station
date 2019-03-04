@@ -8,6 +8,7 @@ class Model_Facility extends Model_Base
     'id',
     'site_id',
     'name',
+    'disp_flag',
     'created_at',
     'updated_at',
     'deleted_at',
