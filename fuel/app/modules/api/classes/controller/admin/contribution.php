@@ -198,7 +198,6 @@ class Controller_Admin_Contribution extends Controller_Base
       unset($this->body['data']);
       $this->success();
 
-
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
@@ -402,19 +401,32 @@ class Controller_Admin_Contribution extends Controller_Base
   {
       $contribution_id = \Input::post('contribution_id');
       $comment_id = \Input::post('comment_id');
+      $reject_url = \Input::post('reject_url');
     try {
       $contribute = \Model_Post::find($contribution_id);
       $comment = \Model_Comment::find($comment_id);
-      $user = \Auth_User::find($contribute->contribution_id);
+      $user = \Auth_User::find($contribute->contributor_id);
       $email = $user->email;
-      $type = \Input::get('type');
-      $this->data = \Model_Comment::query()->where('type', $type)->get();
+      $info = array();
+      $info['url'] = $reject_url;
+      $info['comment'] = $comment->comment;
+
+      \Email::forge()
+        ->from('info')
+        ->to($email)
+        ->subject('【みんなの駅】投稿がリジェクトされました')
+        ->body(\View::forge('reject', $info))
+        ->send();
+
+      $contribute->status = 'リジェクト';
+      $contribute->save();
+      unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        '定型文の取得に失敗しました'
+        'リジェクト処理に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
