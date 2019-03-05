@@ -462,7 +462,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $email = $user->email;
       $info = array();
       $info['url'] = $complete_url;
-      $info['comment'] = $comment->comment;
+      $info['comment'] = $comment['comment'];
 
       if (!empty($_FILES)) {
         $config = array(
