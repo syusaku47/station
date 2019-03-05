@@ -232,6 +232,41 @@ class Controller_Admin_Contribution extends Controller_Base
     }
   }
 
+  public function patch_edit_information()
+  {
+    try {
+      $information = \Model_Information::find(\Input::patch('information_id'));
+      $information->title = \Input::patch('title');
+      $information->body = \Input::patch('body');
+      $information->save();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'お知らせの更新に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
+  public function patch_delete_information()
+  {
+    try {
+      $information = \Model_Information::find(\Input::patch('information_id'));
+      $information->is_private = true;
+      $information->save();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'お知らせの削除に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
   public function post_edit()
   {
     $contribution_id = \Input::post('contribution_id');

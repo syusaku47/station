@@ -28,7 +28,7 @@ class Model_Information extends Model_Base
 
     $limit = min((int) @$input['limit'] ?: 50, 10000);
     $offset = ((is_numeric(@$input['p']) ? $input['p'] : 1) - 1) * $limit;
-    $list = self::query()->order_by('date', 'desc')
+    $list = self::query()->where('is_private', 0)->order_by('date', 'desc')
       ->rows_limit($limit)
       ->rows_offset($offset)
       ->get();
