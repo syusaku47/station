@@ -232,11 +232,11 @@ class Controller_Admin_Contribution extends Controller_Base
     }
   }
 
-  public function patch_edit()
+  public function post_edit()
   {
-    $contribution_id = \Input::patch('contribution_id');
-    $status = \Input::patch('status');
-    $repairer_id = \Input::patch('repairer_id');
+    $contribution_id = \Input::post('contribution_id');
+    $status = \Input::post('status');
+    $repairer_id = \Input::post('repairer_id');
 
     try {
       $contribute = \Model_Post::find($contribution_id);
@@ -296,7 +296,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $contribute->save();
 
       if ($needs_send_mail) {
-        $contribution_url = \Input::patch('contribution_url');
+        $contribution_url = \Input::post('contribution_url');
         $tmp = \Model_Repairer::query()->select('email')->where('id', '=', $repairer_id)->get_one()->to_array();
         $email = $tmp['email'];
         $info['url'] = $contribution_url;

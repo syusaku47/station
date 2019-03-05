@@ -321,7 +321,7 @@ class Controller_Contribution extends Controller_Base
         ];
         return;
       }
-      
+
       if (!empty($_FILES)) {
         \Log::error('passed');
         $config = array(
