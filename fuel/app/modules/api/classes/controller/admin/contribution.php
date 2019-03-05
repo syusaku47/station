@@ -272,7 +272,7 @@ class Controller_Admin_Contribution extends Controller_Base
     $contribution_id = \Input::post('contribution_id');
     $status = \Input::post('status');
     $repairer_id = \Input::post('repairer_id');
-
+    $thumbnail_before = \Input::post('thumbnail_before');
     try {
       $contribute = \Model_Post::find($contribution_id);
       if (!$contribute) {
@@ -305,7 +305,6 @@ class Controller_Admin_Contribution extends Controller_Base
           if ($file) {
             //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
             $thumbnail_before = \Uri::base(false) . 'contents/' . $file['saved_as'];
-            $contribute->thumbnail_before = $thumbnail_before;
           } else {
             $this->failed();
             $this->error = [
@@ -322,6 +321,7 @@ class Controller_Admin_Contribution extends Controller_Base
         }
       }
 
+      $contribute->thumbnail_before = $thumbnail_before;
       $needs_send_mail = false;
       $contribute->status = $status;
       if ($contribute->repairer_id != $repairer_id) {
@@ -409,6 +409,41 @@ class Controller_Admin_Contribution extends Controller_Base
       $email = $user->email;
       $info = array();
       $info['url'] = $reject_url;
+      $info['comment'] = $comment->comment;
+
+      \Email::forge()
+        ->from('info')
+        ->to($email)
+        ->subject('【みんなの駅】投稿がリジェクトされました')
+        ->body(\View::forge('reject', $info))
+        ->send();
+
+      $contribute->status = 'リジェクト';
+      $contribute->save();
+      unset($this->body['data']);
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'リジェクト処理に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
+  public function post_complete_contribution()
+  {
+    $contribution_id = \Input::post('contribution_id');
+    $comment_id = \Input::post('comment_id');
+    $complete_url = \Input::post('complete_url');
+    try {
+      $contribute = \Model_Post::find($contribution_id);
+      $comment = \Model_Comment::find($comment_id);
+      $user = \Auth_User::find($contribute->contributor_id);
+      $email = $user->email;
+      $info = array();
+      $info['url'] = $complete_url;
       $info['comment'] = $comment->comment;
 
       \Email::forge()
