@@ -175,7 +175,6 @@ class Controller_Admin_Contribution extends Controller_Base
         }
       }
 
-
       $post = \Model_Post::forge();
       $post->contributor_id = $contributor_id;
       $post->child_id = 0;
@@ -239,6 +238,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $information->title = \Input::patch('title');
       $information->body = \Input::patch('body');
       $information->save();
+      unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
@@ -256,6 +256,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $information = \Model_Information::find(\Input::patch('information_id'));
       $information->is_private = true;
       $information->save();
+      unset($this->body['data']);
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
@@ -356,7 +357,8 @@ class Controller_Admin_Contribution extends Controller_Base
     }
   }
 
-  public function get_contribution_list($order = 'desc'){
+  public function get_contribution_list($order = 'desc')
+  {
     try {
       if (!$data = $this->verify([
         'limit',
@@ -365,7 +367,7 @@ class Controller_Admin_Contribution extends Controller_Base
         return;
       }
       $order = \Input::get('order');
-      $contributes = \Model_Post::get_contribution_list($data,$order);
+      $contributes = \Model_Post::get_contribution_list($data, $order);
       $this->data = $contributes;
       $this->success();
 
@@ -380,4 +382,41 @@ class Controller_Admin_Contribution extends Controller_Base
 
   }
 
+  public function get_comment_list()
+  {
+    try {
+      $type = \Input::get('type');
+      $this->data = \Model_Comment::query()->where('type', $type)->get();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '定型文の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
+  public function post_reject_contribution()
+  {
+      $contribution_id = \Input::post('contribution_id');
+      $comment_id = \Input::post('comment_id');
+    try {
+      $contribute = \Model_Post::find($contribution_id);
+      $comment = \Model_Comment::find($comment_id);
+      $user = \Auth_User::find($contribute->contribution_id);
+      $email = $user->email;
+      $type = \Input::get('type');
+      $this->data = \Model_Comment::query()->where('type', $type)->get();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '定型文の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
 }

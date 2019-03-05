@@ -69,6 +69,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
   }
 
   public static function numbering_child_id($parent_id){
+    \Log::error('parent_id : '.$parent_id);
     $query = \DB::select(\DB::expr('MAX(`child_id`) + 1 as next_id'))->from('posts')->where('parent_id', $parent_id);
     $result = $query->execute();
     \Log::error('next_id : '.$result[0]['next_id']);

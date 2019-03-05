@@ -182,7 +182,7 @@ class Controller_Admin_User extends Controller_Base
   public function patch_update()
   {
     try {
-
+      $user = \Auth_User::get_user();
       $params = array();
       $nickname = \Input::patch('nickname');
       if (mb_strlen($nickname) == 0) {
