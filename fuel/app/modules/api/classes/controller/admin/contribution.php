@@ -467,7 +467,7 @@ class Controller_Admin_Contribution extends Controller_Base
 
           // 正常保存された場合、アップロードファイル情報を取得
           if ($files) {
-            var_dump($files);
+            //var_dump($files);
             switch (count($files)) {
               case 1:
                 $thumbnail_after1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
