@@ -300,9 +300,9 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
-  public function patch_edit_remarks(){
-    $contribution_id = \Input::patch('contribution_id');
-    $remarks = \Input::patch('remarks');
+  public function post_edit_remarks(){
+    $contribution_id = \Input::post('contribution_id');
+    $remarks = \Input::post('remarks');
     if (mb_strlen($remarks) > 200) {
       $this->failed();
       $this->error = [
@@ -321,7 +321,9 @@ class Controller_Contribution extends Controller_Base
         ];
         return;
       }
+      
       if (!empty($_FILES)) {
+        \Log::error('passed');
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
           'randomize' => true, //ファイル名をランダム生成

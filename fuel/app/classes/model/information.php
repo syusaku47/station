@@ -28,11 +28,11 @@ class Model_Information extends Model_Base
 
     $limit = min((int) @$input['limit'] ?: 50, 10000);
     $offset = ((is_numeric(@$input['p']) ? $input['p'] : 1) - 1) * $limit;
-    $count = \DB::count_records('informations');
     $list = self::query()->order_by('date', 'desc')
       ->rows_limit($limit)
       ->rows_offset($offset)
       ->get();
+    $count = \DB::count_last_query();
 
     if ($to_array) {
       // $_to_array_exclude適用
