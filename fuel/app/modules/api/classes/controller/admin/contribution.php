@@ -404,6 +404,14 @@ class Controller_Admin_Contribution extends Controller_Base
     $reject_url = \Input::post('reject_url');
     try {
       $contribute = \Model_Post::find($contribution_id);
+      if(!$contribute){
+        $this->failed();
+        $this->error = [
+          E::SERVER_ERROR,
+          'リジェクト処理に失敗しました'
+        ];
+        return;
+      }
       $comment = \Model_Comment::find($comment_id);
       $user = \Auth_User::find($contribute->contributor_id);
       $email = $user->email;
@@ -439,7 +447,16 @@ class Controller_Admin_Contribution extends Controller_Base
     $complete_url = \Input::post('complete_url');
 
     try {
+      
       $contribute = \Model_Post::find($contribution_id);
+      if(!$contribute){
+        $this->failed();
+        $this->error = [
+          E::SERVER_ERROR,
+          '完了処理に失敗しました'
+        ];
+        return;
+      }
       $comment = \Model_Comment::find($comment_id);
       $user = \Auth_User::find($contribute->contributor_id);
       $email = $user->email;
