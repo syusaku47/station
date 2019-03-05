@@ -399,9 +399,9 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function post_reject_contribution()
   {
-      $contribution_id = \Input::post('contribution_id');
-      $comment_id = \Input::post('comment_id');
-      $reject_url = \Input::post('reject_url');
+    $contribution_id = \Input::post('contribution_id');
+    $comment_id = \Input::post('comment_id');
+    $reject_url = \Input::post('reject_url');
     try {
       $contribute = \Model_Post::find($contribution_id);
       $comment = \Model_Comment::find($comment_id);
@@ -437,6 +437,7 @@ class Controller_Admin_Contribution extends Controller_Base
     $contribution_id = \Input::post('contribution_id');
     $comment_id = \Input::post('comment_id');
     $complete_url = \Input::post('complete_url');
+
     try {
       $contribute = \Model_Post::find($contribution_id);
       $comment = \Model_Comment::find($comment_id);
@@ -446,14 +447,73 @@ class Controller_Admin_Contribution extends Controller_Base
       $info['url'] = $complete_url;
       $info['comment'] = $comment->comment;
 
+      if (!empty($_FILES)) {
+        $config = array(
+          'path' => DOCROOT . 'contents/', //保存先のパス
+          'randomize' => true, //ファイル名をランダム生成
+          //'new_name' => $data['file_name'],
+          'auto_rename' => true,
+          'ext_whitelist' => array('jpg', 'jpeg', 'png'),
+          'max_size' => 0,//制限なし
+          'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
+          //'auto_rename' => true, //ファイル名が重複した場合、連番を付与
+          'auto_process' => false
+        );
+        mb_convert_variables('UTF-8', 'UTF-8', $config);
+        \Upload::process($config);
+        if (\Upload::is_valid()) {
+          \Upload::save();
+          $files = \Upload::get_files();
+
+          // 正常保存された場合、アップロードファイル情報を取得
+          if ($files) {
+            var_dump($files);
+            switch (count($files)) {
+              case 1:
+                $thumbnail_after1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $contribute->thumbnail_after1 = $thumbnail_after1;
+                break;
+              case 2:
+                $thumbnail_after1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_after2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $contribute->thumbnail_after1 = $thumbnail_after1;
+                $contribute->thumbnail_after2 = $thumbnail_after2;
+                break;
+              case 3:
+                $thumbnail_after1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_after2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $thumbnail_after3 = \Uri::base(false) . 'contents/' . $files[2]['saved_as'];
+                $contribute->thumbnail_after1 = $thumbnail_after1;
+                $contribute->thumbnail_after2 = $thumbnail_after2;
+                $contribute->thumbnail_after3 = $thumbnail_after3;
+                break;
+              default:
+                break;
+            }
+          } else {
+            $this->failed();
+            $this->error = [
+              E::SERVER_ERROR,
+              'サムネイルの保存に失敗しました'
+            ];
+          }
+        } else {
+          $this->failed();
+          $this->error = [
+            E::SERVER_ERROR,
+            '不正なファイルです'
+          ];
+        }
+      }
+
       \Email::forge()
         ->from('info')
         ->to($email)
-        ->subject('【みんなの駅】投稿がリジェクトされました')
-        ->body(\View::forge('reject', $info))
+        ->subject('【みんなの駅】修繕が完了しました')
+        ->body(\View::forge('complete', $info))
         ->send();
 
-      $contribute->status = 'リジェクト';
+      $contribute->status = '完了';
       $contribute->save();
       unset($this->body['data']);
       $this->success();
@@ -461,7 +521,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,
-        'リジェクト処理に失敗しました'
+        '完了処理に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
