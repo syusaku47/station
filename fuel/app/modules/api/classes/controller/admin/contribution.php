@@ -166,6 +166,7 @@ class Controller_Admin_Contribution extends Controller_Base
               'サムネイルの保存に失敗しました'
             ];
           }
+
         } else {
           $this->failed();
           $this->error = [
@@ -195,6 +196,17 @@ class Controller_Admin_Contribution extends Controller_Base
         \Log::error('child_id : ' . $post->child_id);
       }
       $post->save();
+      $contribution_url = \Input::post('contribution_url');
+      $tmp = \Model_Repairer::query()->select('email')->where('id', '=', 1)->get_one()->to_array();
+      $email = $tmp['email'];
+      $info['url'] = $contribution_url;
+
+      \Email::forge()
+        ->from('info')
+        ->to($email)
+        ->subject('【みんなの駅】担当に設定されました')
+        ->body(\View::forge('to_repairer', $info))
+        ->send();
       unset($this->body['data']);
       $this->success();
 
