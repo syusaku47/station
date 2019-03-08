@@ -1,12 +1,12 @@
 <?php
 
 echo '投稿がリジェクトされました。';
-echo "\n";
+echo PHP_EOL;
 echo 'リジェクト理由： '. $comment;
-echo "\n";
-echo "\n";
-echo '投稿詳細URL';
-echo "\n";
+echo PHP_EOL;
+echo PHP_EOL;
+echo '【投稿詳細URL】';
+echo PHP_EOL;
 echo $url;
-echo "\n";
+echo PHP_EOL;
 

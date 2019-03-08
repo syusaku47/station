@@ -137,6 +137,20 @@ class Controller_Contribution extends Controller_Base
       }
       $contributor_id = $user->to_array()['id'];
 
+      $post = \Model_Post::forge();
+      $post->child_id = 0;
+      $post->contributor_id = $contributor_id;
+      $post->route_id = $route_id;
+      $post->station_id = $station_id;
+      $post->status = '未対応';
+      $post->site_id = $site_id;
+      $post->site_text = $site_text;
+      $post->facility_id = $facility_id;
+      $post->facility_text = $facility_text;
+      $post->overview = $overview;
+      $post->remarks = $remarks;
+      $post->repairer_id = 1;
+
       if (!empty($_FILES)) {
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
@@ -153,11 +167,33 @@ class Controller_Contribution extends Controller_Base
         \Upload::process($config);
         if (\Upload::is_valid()) {
           \Upload::save();
-          $file = \Upload::get_files()[0];
+          $files = \Upload::get_files();
+
           // 正常保存された場合、アップロードファイル情報を取得
-          if ($file) {
-            //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
-            $thumbnail_before = \Uri::base(false) . 'contents/' . $file['saved_as'];
+          if ($files) {
+            //var_dump($files);
+            switch (count($files)) {
+              case 1:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $post->thumbnail_before1 = $thumbnail_before1;
+                break;
+              case 2:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_before2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $post->thumbnail_before1 = $thumbnail_before1;
+                $post->thumbnail_before2 = $thumbnail_before2;
+                break;
+              case 3:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_before2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $thumbnail_before3 = \Uri::base(false) . 'contents/' . $files[2]['saved_as'];
+                $post->thumbnail_before1 = $thumbnail_before1;
+                $post->thumbnail_before2 = $thumbnail_before2;
+                $post->thumbnail_before3 = $thumbnail_before3;
+                break;
+              default:
+                break;
+            }
           } else {
             $this->failed();
             $this->error = [
@@ -175,21 +211,19 @@ class Controller_Contribution extends Controller_Base
       }
 
 
-      $post = \Model_Post::forge();
-      $post->child_id = 0;
-      $post->contributor_id = $contributor_id;
-      $post->route_id = $route_id;
-      $post->station_id = $station_id;
-      $post->status = '未対応';
-      $post->site_id = $site_id;
-      $post->site_text = $site_text;
-      $post->facility_id = $facility_id;
-      $post->facility_text = $facility_text;
-      $post->overview = $overview;
-      $post->remarks = $remarks;
-      $post->repairer_id = 1;
-      $post->thumbnail_before = $thumbnail_before;
       $post->save();
+      $latest_post = \Model_Post::get_contribution_history($contributor_id)[0];
+      $contribution_url = \Input::post('contribution_url'). $latest_post['id'];
+      $tmp = \Model_Repairer::query()->select('email')->where('id', '=', 1)->get_one()->to_array();
+      $email = $tmp['email'];
+      $info['url'] = $contribution_url;
+
+      \Email::forge()
+        ->from('info')
+        ->to($email)
+        ->subject('【みんなの駅】担当に設定されました')
+        ->body(\View::forge('to_repairer', $info))
+        ->send();
       unset($this->body['data']);
       $this->success();
 
@@ -270,7 +304,16 @@ class Controller_Contribution extends Controller_Base
         return;
       }
 
-      $contributes = \Model_Post::get_other_contributes($status, $station_id);
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+      $contributor_id = $user->to_array()['id'];
+      $contributes = \Model_Post::get_other_contributes($status, $station_id, $contributor_id);
       $this->data = $contributes;
       $this->success();
 
@@ -323,7 +366,6 @@ class Controller_Contribution extends Controller_Base
       }
 
       if (!empty($_FILES)) {
-        \Log::error('passed');
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
           'randomize' => true, //ファイル名をランダム生成
@@ -339,12 +381,33 @@ class Controller_Contribution extends Controller_Base
         \Upload::process($config);
         if (\Upload::is_valid()) {
           \Upload::save();
-          $file = \Upload::get_files()[0];
+          $files = \Upload::get_files();
+
           // 正常保存された場合、アップロードファイル情報を取得
-          if ($file) {
-            //$thumbnail_before = DOCROOT . 'contents/' . $file['name'] . '.' . $file['extension'];
-            $thumbnail_before = \Uri::base(false) . 'contents/' . $file['saved_as'];
-            $contribute->thumbnail_before = $thumbnail_before;
+          if ($files) {
+            //var_dump($files);
+            switch (count($files)) {
+              case 1:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $contribute->thumbnail_before1 = $thumbnail_before1;
+                break;
+              case 2:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_before2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $contribute->thumbnail_before1 = $thumbnail_before1;
+                $contribute->thumbnail_before2 = $thumbnail_before2;
+                break;
+              case 3:
+                $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
+                $thumbnail_before2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
+                $thumbnail_before3 = \Uri::base(false) . 'contents/' . $files[2]['saved_as'];
+                $contribute->thumbnail_before1 = $thumbnail_before1;
+                $contribute->thumbnail_before2 = $thumbnail_before2;
+                $contribute->thumbnail_before3 = $thumbnail_before3;
+                break;
+              default:
+                break;
+            }
           } else {
             $this->failed();
             $this->error = [
