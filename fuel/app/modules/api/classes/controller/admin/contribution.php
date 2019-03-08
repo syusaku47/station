@@ -421,12 +421,15 @@ class Controller_Admin_Contribution extends Controller_Base
               case 1:
                 $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
                 $contribute->thumbnail_before1 = $thumbnail_before1;
+                $contribute->thumbnail_before2 = null;
+                $contribute->thumbnail_before3 = null;
                 break;
               case 2:
                 $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
                 $thumbnail_before2 = \Uri::base(false) . 'contents/' . $files[1]['saved_as'];
                 $contribute->thumbnail_before1 = $thumbnail_before1;
                 $contribute->thumbnail_before2 = $thumbnail_before2;
+                $contribute->thumbnail_before3 = null;
                 break;
               case 3:
                 $thumbnail_before1 = \Uri::base(false) . 'contents/' . $files[0]['saved_as'];
