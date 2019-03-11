@@ -410,7 +410,7 @@ class Controller_Admin_Contribution extends Controller_Base
         );
         mb_convert_variables('UTF-8', 'UTF-8', $config);
         \Upload::process($config);
-        if (\Upload::is_valid()) {
+        //if (\Upload::is_valid()) {
           \Upload::save();
           $files = \Upload::get_files();
 
@@ -449,13 +449,13 @@ class Controller_Admin_Contribution extends Controller_Base
               'サムネイルの保存に失敗しました'
             ];
           }
-        } else {
-          $this->failed();
-          $this->error = [
-            E::SERVER_ERROR,
-            '不正なファイルです'
-          ];
-        }
+//        } else {
+//          $this->failed();
+//          $this->error = [
+//            E::SERVER_ERROR,
+//            '不正なファイルです'
+//          ];
+//        }
       }
 
       $needs_send_mail = $contribute->repairer_id != $repairer_id ? true : false;
