@@ -397,7 +397,6 @@ class Controller_Admin_Contribution extends Controller_Base
       }
 
       if (!empty($_FILES)) {
-        var_dump($_FILES);
         $config = array(
           'path' => DOCROOT . 'contents/', //保存先のパス
           'randomize' => true, //ファイル名をランダム生成
