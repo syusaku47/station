@@ -450,6 +450,7 @@ class Controller_Admin_Contribution extends Controller_Base
             ];
           }
         } else {
+          var_dump($_FILES);
           $this->failed();
           $this->error = [
             E::SERVER_ERROR,
