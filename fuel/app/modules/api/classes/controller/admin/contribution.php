@@ -402,7 +402,7 @@ class Controller_Admin_Contribution extends Controller_Base
           'randomize' => true, //ファイル名をランダム生成
           //'new_name' => $data['file_name'],
           'auto_rename' => true,
-          'ext_whitelist' => array('jpg', 'jpeg', 'png'),
+          //'ext_whitelist' => array('jpg', 'jpeg', 'png'),
           'max_size' => 0,//制限なし
           'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
           //'auto_rename' => true, //ファイル名が重複した場合、連番を付与
