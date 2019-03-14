@@ -111,16 +111,16 @@ class Controller_Admin_Contribution extends Controller_Base
         return;
       }
       $overview = \Input::post('overview');
-      if (mb_strlen($overview) > 100) {
+      if (mb_strlen($overview) > 200) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
-          '状況は200字以内で入力してください'
+          '事象は200字以内で入力してください'
         ];
         return;
       }
       $remarks = \Input::post('remarks');
-      if (mb_strlen($remarks) > 100) {
+      if (mb_strlen($remarks) > 200) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,

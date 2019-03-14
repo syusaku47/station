@@ -109,7 +109,7 @@ class Controller_Contribution extends Controller_Base
         return;
       }
       $overview = \Input::post('overview');
-      if (mb_strlen($overview) > 100) {
+      if (mb_strlen($overview) > 200) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -118,7 +118,7 @@ class Controller_Contribution extends Controller_Base
         return;
       }
       $remarks = \Input::post('remarks');
-      if (mb_strlen($remarks) > 100) {
+      if (mb_strlen($remarks) > 200) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
