@@ -51,22 +51,14 @@ return array(
 	/**
 	 * Remember-me functionality
 	 */
-	'remember_me' => array(
-		/**
-		 * Whether or not remember me functionality is enabled
-		 */
-		'enabled' => false,
 
-		/**
-		 * Name of the cookie used to record this functionality
-		 */
-		'cookie_name' => 'rmcookie',
+      'remember_me' => array(
+        'enabled' => true,
+      ),
+      'login_hash_salt' => 'xCgK4hd4s?H-',
+      'username_post_key' => 'email',
+      'password_post_key' => 'password',
 
-		/**
-		 * Remember me expiration (default: 31 days)
-		 */
-		'expiration' => 86400 * 31,
-	),
 
 	/**
 	 * This will allow the same user to be logged in multiple times.
@@ -75,11 +67,6 @@ return array(
 	 * be disabled for this to work!
 	 */
 	'multiple_logins' => false,
-
-	/**
-	 * Salt for the login hash
-	 */
-	'login_hash_salt' => 'jp.co.marietta',
 
 	/**
 	 * $_POST key for login username

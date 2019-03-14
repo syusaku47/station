@@ -28,7 +28,7 @@ class Controller_Base extends \Controller_Rest
 
 		if ($this->err) {
 			$this->body['error'] = $this->err;
-			$this->body['data'] = '';
+			//$this->body['data'] = '';
 		}
 
 		$this->response->set_headers([
@@ -85,6 +85,17 @@ class Controller_Base extends \Controller_Rest
 		}
 		return true;
 	}
+
+  protected function success()
+  {
+    $this->body['status'] = 'success';
+  }
+
+  protected function failed()
+  {
+    unset($this->body['data']);
+    $this->body['status'] = 'failed';
+  }
 
 	protected function verify($fields = [], $search = false, $param = [])
 	{

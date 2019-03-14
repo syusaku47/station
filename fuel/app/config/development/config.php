@@ -23,7 +23,7 @@ return array(
 	 *
 	 * Set this to null to have it automatically detected.
 	 */
-	'base_url'  => '/',
+	'base_url'  => 'http://app.localhost/',
 
 	/**
 	 * url_suffix - Any suffix that needs to be added to
@@ -189,7 +189,7 @@ return array(
 	/**
 	 * Cookie settings
 	 */
-	'cookie' => array(
+	//'cookie' => array(
 		// Number of seconds before the cookie expires
 		// 'expiration'  => 0,
 		// Restrict the path that the cookie is available to
@@ -197,10 +197,10 @@ return array(
 		// Restrict the domain that the cookie is available to
 		// 'domain'      => null,
 		// Only transmit cookies over secure connections
-		'secure'      => true,
+		//'secure'      => true,
 		// Only transmit cookies over HTTP, disabling Javascript access
-		'http_only'   => true,
-	),
+		//'http_only'   => true,
+	//),
 
 	/**
 	 * Validation settings
