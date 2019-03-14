@@ -1,5 +1,5 @@
 # Multiple Environment config, set this to development, staging or production
-# SetEnv FUEL_ENV production
+ SetEnv FUEL_ENV production
 
 Header set Access-Control-Allow-Origin "http://tomato.local:3000"
 Header set Access-Control-Allow-Credentials true
@@ -25,10 +25,10 @@ Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS, PATCH"
 	#RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
 	# Option 2: To rewrite "domain.com -> www.domain.com" uncomment the following lines.
-	#RewriteCond %{HTTPS} !=on
-	#RewriteCond %{HTTP_HOST} !^www\..+$ [NC]
-	#RewriteCond %{HTTP_HOST} (.+)$ [NC]
-	#RewriteRule ^(.*)$ http://www.%1/$1 [R=301,L]
+	RewriteCond %{HTTPS} !=on
+	RewriteCond %{HTTP_HOST} !^www\..+$ [NC]
+	RewriteCond %{HTTP_HOST} (.+)$ [NC]
+	RewriteRule ^(.*)$ http://www.%1/$1 [R=301,L]
 
 	# Remove index.php from URL
 	#RewriteCond %{HTTP:X-Requested-With}	!^XMLHttpRequest$
