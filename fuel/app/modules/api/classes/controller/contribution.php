@@ -54,7 +54,7 @@ class Controller_Contribution extends Controller_Base
   {
     try {
       $route_id = \Input::get('route_id');
-      $this->data = \Model_Station::query()->select('id', 'name')->where('route_id', $route_id)->order_by('name_kana', 'desc')->get();
+      $this->data = \Model_Station::query()->select('id', 'name')->where('route_id', $route_id)->order_by('name_kana', 'asc')->get();
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
