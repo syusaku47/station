@@ -230,7 +230,7 @@ class Controller_Admin_Contribution extends Controller_Base
         ->to($email)
         ->subject('【みんなの駅】担当に設定されました')
         ->body(\View::forge('to_repairer', $info))
-        ->send();
+        ->send(false);
       unset($this->body['data']);
       $this->success();
 
@@ -484,7 +484,7 @@ class Controller_Admin_Contribution extends Controller_Base
           ->to($email)
           ->subject('【みんなの駅】担当に設定されました')
           ->body(\View::forge('to_repairer', $info))
-          ->send();
+          ->send(false);
       }
 
       unset($this->body['data']);
@@ -567,7 +567,7 @@ class Controller_Admin_Contribution extends Controller_Base
         ->to($email)
         ->subject('【みんなの駅】投稿がリジェクトされました')
         ->body(\View::forge('reject', $info))
-        ->send();
+        ->send(false);
 
       $contribute->status = 'リジェクト';
       $contribute->reject_id = $comment_id;
@@ -672,7 +672,7 @@ class Controller_Admin_Contribution extends Controller_Base
         ->to($email)
         ->subject('【みんなの駅】修繕が完了しました')
         ->body(\View::forge('complete', $info))
-        ->send();
+        ->send(false);
 
       $contribute->status = '完了';
       $contribute->complete_id = $comment_id;

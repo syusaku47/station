@@ -223,7 +223,7 @@ class Controller_Contribution extends Controller_Base
         ->to($email)
         ->subject('【みんなの駅】担当に設定されました')
         ->body(\View::forge('to_repairer', $info))
-        ->send();
+        ->send(false);
       unset($this->body['data']);
       $this->success();
 
