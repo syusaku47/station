@@ -8,6 +8,7 @@ class Model_Station extends Model_Base
     'id',
     'route_id',
     'name',
+    'name_kana',
     'latitude',
     'longitude',
     'created_at',

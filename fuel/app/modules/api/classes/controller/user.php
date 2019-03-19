@@ -392,7 +392,7 @@ class Controller_User extends Controller_Base
         ->to($user->email)
         ->subject('【みんなの駅】パスワード再発行のご案内')
         ->body(\View::forge('preissue', $email_user))
-        ->send();
+        ->send(false);
       unset($this->body['data']);
       $this->success();
 

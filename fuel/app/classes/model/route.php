@@ -8,6 +8,7 @@ class Model_Route extends Model_Base
     'id',
     'code',
     'name',
+    'name_kana',
     'created_at',
     'updated_at',
     'deleted_at',
