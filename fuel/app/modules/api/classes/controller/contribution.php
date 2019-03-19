@@ -331,7 +331,12 @@ class Controller_Contribution extends Controller_Base
   public function get_information_list()
   {
     try {
-      $this->data = \Model_Information::find('all', array('order_by' => array('date' => 'desc')));
+      $this->data = \Model_Information::find('all', array(
+        'where' => array(
+          array('is_private', 0),
+        ),
+        'order_by' => array('date' => 'desc'),
+      ));
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
