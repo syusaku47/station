@@ -93,7 +93,7 @@ site.name as site_name,p.site_text as site_text,p.facility_id as facility_id, f.
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
   inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id inner join repairers rp on p.repairer_id = rp.id left join comments c on p.reject_id = c.id left join comments c2 on p.complete_id = c2.id where um.key = \'nickname\' order by '.$order
    .' limit '.$limit.' offset '.$offset );
-    \Log::error('query : '.$query);
+    //\Log::error('query : '.$query);
     $list = $query->execute();
     $count = \DB::count_last_query();
 
