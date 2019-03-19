@@ -517,15 +517,8 @@ class Controller_Admin_Contribution extends Controller_Base
       $station_order = \Input::get('station_order');
       $order_base = array();
 
-      if ($status) {
-        if ($status_order == 'desc') {
-          $order_base[] = ' p.status desc ';
-        } else {
-          $order_base[] = ' p.status asc ';
-        }
-      }
 
-      if ($route) {
+      if ($route == 'true') {
         if ($route_order == 'desc') {
           $order_base[] = ' r.name_kana desc ';
         } else {
@@ -533,11 +526,19 @@ class Controller_Admin_Contribution extends Controller_Base
         }
       }
 
-      if ($station) {
+      if ($station == 'true') {
         if ($station_order == 'desc') {
           $order_base[] = ' s.name_kana desc ';
         } else {
           $order_base[] = ' s.name_kana asc ';
+        }
+      }
+
+      if ($status == 'true') {
+        if ($status_order == 'desc') {
+          $order_base[] = ' p.status desc ';
+        } else {
+          $order_base[] = ' p.status asc ';
         }
       }
 
