@@ -517,12 +517,10 @@ class Controller_Admin_Contribution extends Controller_Base
       $station_order = \Input::get('station_order');
       $order_base = array();
 
-      if ($status) {
-        if ($status_order == 'desc') {
-          $order_base[] = ' p.status desc ';
-        } else {
-          $order_base[] = ' p.status asc ';
-        }
+      if ($created_at_order == 'asc') {
+        $order_base[] = ' p.created_at asc ';
+      } else {
+        $order_base[] = ' p.created_at desc ';
       }
 
       if ($route) {
@@ -541,10 +539,12 @@ class Controller_Admin_Contribution extends Controller_Base
         }
       }
 
-      if ($created_at_order == 'asc') {
-        $order_base[] = ' p.created_at asc ';
-      } else {
-        $order_base[] = ' p.created_at desc ';
+      if ($status) {
+        if ($status_order == 'desc') {
+          $order_base[] = ' p.status desc ';
+        } else {
+          $order_base[] = ' p.status asc ';
+        }
       }
 
       $order = implode(' , ', $order_base);
