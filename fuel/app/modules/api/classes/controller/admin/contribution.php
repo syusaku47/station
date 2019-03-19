@@ -220,7 +220,7 @@ class Controller_Admin_Contribution extends Controller_Base
       }
       $post->save();
       $latest_post = \Model_Post::get_contribution_history($contributor_id)[0];
-      $contribution_url = \Input::post('contribution_url'). $latest_post['id'];
+      $contribution_url = \Input::post('contribution_url') . $latest_post['id'];
       $tmp = \Model_Repairer::query()->select('email')->where('id', '=', 1)->get_one()->to_array();
       $email = $tmp['email'];
       $info['url'] = $contribution_url;
@@ -249,7 +249,7 @@ class Controller_Admin_Contribution extends Controller_Base
     $title = \Input::post('title');
     $body = \Input::post('body');
 
-    if(mb_strlen($title) == 0){
+    if (mb_strlen($title) == 0) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
@@ -257,7 +257,7 @@ class Controller_Admin_Contribution extends Controller_Base
       ];
       return;
     }
-    if(mb_strlen($title) > 50){
+    if (mb_strlen($title) > 50) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
@@ -265,7 +265,7 @@ class Controller_Admin_Contribution extends Controller_Base
       ];
       return;
     }
-    if(mb_strlen($body) > 500){
+    if (mb_strlen($body) > 500) {
       $this->failed();
       $this->error = [
         E::INVALID_PARAM,
@@ -322,7 +322,7 @@ class Controller_Admin_Contribution extends Controller_Base
       $title = \Input::patch('title');
       $body = \Input::patch('body');
       $information = \Model_Information::find(\Input::patch('information_id'));
-      if(mb_strlen($title) == 0){
+      if (mb_strlen($title) == 0) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -330,7 +330,7 @@ class Controller_Admin_Contribution extends Controller_Base
         ];
         return;
       }
-      if(mb_strlen($title) > 50){
+      if (mb_strlen($title) > 50) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -338,7 +338,7 @@ class Controller_Admin_Contribution extends Controller_Base
         ];
         return;
       }
-      if(mb_strlen($body) > 500){
+      if (mb_strlen($body) > 500) {
         $this->failed();
         $this->error = [
           E::INVALID_PARAM,
@@ -460,11 +460,11 @@ class Controller_Admin_Contribution extends Controller_Base
 
       $needs_send_mail = $contribute->repairer_id != $repairer_id ? true : false;
 
-      if($contribute->status == '完了' && $status != '完了'){
+      if ($contribute->status == '完了' && $status != '完了') {
         $contribute->complete_id = null;
         $needs_send_mail = true;
       }
-      if($contribute->status == 'リジェクト' && $status != 'リジェクト'){
+      if ($contribute->status == 'リジェクト' && $status != 'リジェクト') {
         $contribute->reject_id = null;
         $needs_send_mail = true;
       }
@@ -499,7 +499,7 @@ class Controller_Admin_Contribution extends Controller_Base
     }
   }
 
-  public function get_contribution_list($order = 'desc')
+  public function get_contribution_list($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc')
   {
     try {
       if (!$data = $this->verify([
@@ -508,7 +508,46 @@ class Controller_Admin_Contribution extends Controller_Base
       ])) {
         return;
       }
-      $order = \Input::get('order');
+      $status = \Input::get('status');
+      $route = \Input::get('route');
+      $station = \Input::get('station');
+      $status_order = \Input::get('status_order');
+      $created_at_order = \Input::get('created_at_order');
+      $route_order = \Input::get('route_order');
+      $station_order = \Input::get('station_order');
+      $order_base = array();
+
+      if ($status) {
+        if ($status_order == 'desc') {
+          $order_base[] = ' p.status desc ';
+        } else {
+          $order_base[] = ' p.status asc ';
+        }
+      }
+
+      if ($route) {
+        if ($route_order == 'desc') {
+          $order_base[] = ' r.name_kana desc ';
+        } else {
+          $order_base[] = ' r.name_kana asc ';
+        }
+      }
+
+      if ($station) {
+        if ($station_order == 'desc') {
+          $order_base[] = ' s.name_kana desc ';
+        } else {
+          $order_base[] = ' s.name_kana asc ';
+        }
+      }
+
+      if ($created_at_order == 'asc') {
+        $order_base[] = ' p.created_at asc ';
+      } else {
+        $order_base[] = ' p.created_at desc ';
+      }
+
+      $order = implode(' , ', $order_base);
       $contributes = \Model_Post::get_contribution_list($data, $order);
       $this->data = $contributes;
       $this->success();
@@ -547,7 +586,7 @@ class Controller_Admin_Contribution extends Controller_Base
     $reject_url = \Input::post('reject_url');
     try {
       $contribute = \Model_Post::find($contribution_id);
-      if(!$contribute){
+      if (!$contribute) {
         $this->failed();
         $this->error = [
           E::SERVER_ERROR,
@@ -591,9 +630,9 @@ class Controller_Admin_Contribution extends Controller_Base
     $complete_url = \Input::post('complete_url');
 
     try {
-      
+
       $contribute = \Model_Post::find($contribution_id);
-      if(!$contribute){
+      if (!$contribute) {
         $this->failed();
         $this->error = [
           E::SERVER_ERROR,
