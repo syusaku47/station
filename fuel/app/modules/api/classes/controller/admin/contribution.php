@@ -462,6 +462,9 @@ class Controller_Admin_Contribution extends Controller_Base
 
       if ($contribute->status == '完了' && $status != '完了') {
         $contribute->complete_id = null;
+        $contribute->thumbnail_after1 = null;
+        $contribute->thumbnail_after2 = null;
+        $contribute->thumbnail_after3 = null;
         $needs_send_mail = true;
       }
       if ($contribute->status == 'リジェクト' && $status != 'リジェクト') {
