@@ -69,6 +69,7 @@ class Controller_Admin_Contribution extends Controller_Base
   public function get_closest_station()
   {
     try {
+
       $lat = \Input::get('lat');
       $long = \Input::get('long');
       $this->data = \Model_Station::get_closest_station($lat, $long);
@@ -86,6 +87,25 @@ class Controller_Admin_Contribution extends Controller_Base
   public function post_contribute()
   {
     try {
+
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+
+      if($user->group_id != 2){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '権限がありません'
+        ];
+        return;
+      }
+
       $route_id = \Input::post('route_id');
       $station_id = \Input::post('station_id');
       $site_id = \Input::post('site_id');
@@ -246,6 +266,24 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function post_new_information()
   {
+    if (!$user = \Auth_User::get_user()) {
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+      return;
+    }
+
+    if($user->group_id != 2){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '権限がありません'
+      ];
+      return;
+    }
+
     $title = \Input::post('title');
     $body = \Input::post('body');
 
@@ -304,6 +342,24 @@ class Controller_Admin_Contribution extends Controller_Base
         return;
       }
 
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+
+      if($user->group_id != 2){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '権限がありません'
+        ];
+        return;
+      }
+
       $this->list = \Model_Information::search($data);
       $this->success();
     } catch (\Exception $e) {
@@ -319,6 +375,25 @@ class Controller_Admin_Contribution extends Controller_Base
   public function patch_edit_information()
   {
     try {
+
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+
+      if($user->group_id != 2){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '権限がありません'
+        ];
+        return;
+      }
+
       $title = \Input::patch('title');
       $body = \Input::patch('body');
       $information = \Model_Information::find(\Input::patch('information_id'));
@@ -365,6 +440,25 @@ class Controller_Admin_Contribution extends Controller_Base
   public function patch_delete_information()
   {
     try {
+
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+
+      if($user->group_id != 2){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '権限がありません'
+        ];
+        return;
+      }
+
       $information = \Model_Information::find(\Input::patch('information_id'));
       $information->is_private = true;
       $information->save();
@@ -382,6 +476,24 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function post_edit()
   {
+    if (!$user = \Auth_User::get_user()) {
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+      return;
+    }
+
+    if($user->group_id != 2){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '権限がありません'
+      ];
+      return;
+    }
+
     $contribution_id = \Input::post('contribution_id');
     $status = \Input::post('status');
     $repairer_id = \Input::post('repairer_id');
@@ -505,6 +617,25 @@ class Controller_Admin_Contribution extends Controller_Base
   public function get_contribution_list($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc')
   {
     try {
+
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです'
+        ];
+        return;
+      }
+
+      if($user->group_id != 2){
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '権限がありません'
+        ];
+        return;
+      }
+
       if (!$data = $this->verify([
         'limit',
         'p',
@@ -585,6 +716,24 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function post_reject_contribution()
   {
+    if (!$user = \Auth_User::get_user()) {
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+      return;
+    }
+
+    if($user->group_id != 2){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '権限がありません'
+      ];
+      return;
+    }
+
     $contribution_id = \Input::post('contribution_id');
     $comment_id = \Input::post('comment_id');
     $reject_url = \Input::post('reject_url');
@@ -629,6 +778,24 @@ class Controller_Admin_Contribution extends Controller_Base
 
   public function post_complete_contribution()
   {
+    if (!$user = \Auth_User::get_user()) {
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '認証エラーです'
+      ];
+      return;
+    }
+
+    if($user->group_id != 2){
+      $this->failed();
+      $this->error = [
+        E::UNAUTHNTICATED,
+        '権限がありません'
+      ];
+      return;
+    }
+
     $contribution_id = \Input::post('contribution_id');
     $comment_id = \Input::post('comment_id');
     $complete_url = \Input::post('complete_url');
