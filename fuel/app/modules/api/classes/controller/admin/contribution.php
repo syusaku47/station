@@ -100,7 +100,7 @@ class Controller_Admin_Contribution extends Controller_Base
       if($user->group_id != 2){
         $this->failed();
         $this->error = [
-          E::UNAUTHNTICATED,
+          E::INVALID_REQUEST,
           '権限がありません'
         ];
         return;
@@ -278,7 +278,7 @@ class Controller_Admin_Contribution extends Controller_Base
     if($user->group_id != 2){
       $this->failed();
       $this->error = [
-        E::UNAUTHNTICATED,
+        E::INVALID_REQUEST,
         '権限がありません'
       ];
       return;
@@ -354,7 +354,7 @@ class Controller_Admin_Contribution extends Controller_Base
       if($user->group_id != 2){
         $this->failed();
         $this->error = [
-          E::UNAUTHNTICATED,
+          E::INVALID_REQUEST,
           '権限がありません'
         ];
         return;
@@ -388,7 +388,7 @@ class Controller_Admin_Contribution extends Controller_Base
       if($user->group_id != 2){
         $this->failed();
         $this->error = [
-          E::UNAUTHNTICATED,
+          E::INVALID_REQUEST,
           '権限がありません'
         ];
         return;
@@ -453,7 +453,7 @@ class Controller_Admin_Contribution extends Controller_Base
       if($user->group_id != 2){
         $this->failed();
         $this->error = [
-          E::UNAUTHNTICATED,
+          E::INVALID_REQUEST,
           '権限がありません'
         ];
         return;
@@ -488,7 +488,7 @@ class Controller_Admin_Contribution extends Controller_Base
     if($user->group_id != 2){
       $this->failed();
       $this->error = [
-        E::UNAUTHNTICATED,
+        E::INVALID_REQUEST,
         '権限がありません'
       ];
       return;
@@ -630,7 +630,7 @@ class Controller_Admin_Contribution extends Controller_Base
       if($user->group_id != 2){
         $this->failed();
         $this->error = [
-          E::UNAUTHNTICATED,
+          E::INVALID_REQUEST,
           '権限がありません'
         ];
         return;
@@ -728,7 +728,7 @@ class Controller_Admin_Contribution extends Controller_Base
     if($user->group_id != 2){
       $this->failed();
       $this->error = [
-        E::UNAUTHNTICATED,
+        E::INVALID_REQUEST,
         '権限がありません'
       ];
       return;
@@ -790,7 +790,7 @@ class Controller_Admin_Contribution extends Controller_Base
     if($user->group_id != 2){
       $this->failed();
       $this->error = [
-        E::UNAUTHNTICATED,
+        E::INVALID_REQUEST,
         '権限がありません'
       ];
       return;
