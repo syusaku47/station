@@ -113,7 +113,6 @@ class Controller_Admin_Contribution extends Controller_Base
             $site_id = \Input::post('site_id'); //MEMO site_id取得
             $site_text = \Input::post('site_text');//MEMO site_text取得
             $parent_id = \Input::post('parent_id');//MEMO parent_id取得
-            $repairer_id = \Input::post('repairer_id'); //Add 200114 冨岡
 
 
             if (mb_strlen($site_text) > 100) { //MEMO site_text 制限
@@ -175,7 +174,7 @@ class Controller_Admin_Contribution extends Controller_Base
             $post->facility_text = $facility_text;
             $post->overview = $overview;
             $post->remarks = $remarks;
-            $post->repairer_id = $repairer_id;
+            $post->repairer_id = '1';
 
 
             if (!empty($_FILES)) {
@@ -247,7 +246,7 @@ class Controller_Admin_Contribution extends Controller_Base
 
             $latest_post = \Model_Post::get_contribution_history($contributor_id)[0];
             $contribution_url = \Input::post('contribution_url') . $latest_post['id'];
-            $tmp = \Model_Repairer::query()->select('email')->where('id', '=', $repairer_id)->get_one()->to_array();
+            $tmp = \Model_Repairer::query()->select('email')->where('id', '=', '1')->get_one()->to_array();
             $email = $tmp['email'];
             $info['url'] = $contribution_url;
 
