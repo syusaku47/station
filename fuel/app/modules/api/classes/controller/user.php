@@ -399,6 +399,9 @@ class Controller_User extends Controller_Base
             $user->create_hash($user->id);
             $path = \Input::post('path');
             $url_base = \Fuel::$env == \FUEL::PRODUCTION ? 'https://www.minnanoeki.jp/' : \Uri::base(false);
+            \Log::debug('================start==================');
+            \Log::debug($url_base);
+            \Log::debug('================end=:==================');
             $email_user = [];
             $email_user['user'] = $user;
             $reissue_url = $url_base . $path;
