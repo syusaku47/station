@@ -605,6 +605,5 @@ class Controller_Admin_User extends Controller_Base
             $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
         }
     }
-
 }
 
