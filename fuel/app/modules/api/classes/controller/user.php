@@ -402,7 +402,7 @@ class Controller_User extends Controller_Base
             $email_user = [];
             $email_user['user'] = $user;
             $reissue_url = $url_base . $path;
-            if(substr($reissue_url,0,1 == '/')){
+            if(substr($reissue_url,0,1) == '/') {
                 $reissue_url = ltrim($reissue_url,'/');
             }
             $email_user['reissue_url'] = $reissue_url;

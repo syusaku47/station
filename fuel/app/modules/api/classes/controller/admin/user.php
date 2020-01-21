@@ -605,5 +605,18 @@ class Controller_Admin_User extends Controller_Base
             $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
         }
     }
+    public function get_test()
+    {
+        $reissue_url = '/getri';
+        if(substr($reissue_url,0,1) == '/') {
+            echo 'hello';
+        }
+//        $tmp = ltrim($reissue_url,'/');
+//        var_dump($tmp);
+//        if (substr($reissue_url, 0 )){
+//            echo 'hello';
+//            $reissue_url = ltrim($reissue_url, '/');
+//        }
+    }
 }
 
