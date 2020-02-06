@@ -141,6 +141,14 @@ class Controller_User extends Controller_Base
 //        E::UNAUTHNTICATED,
 //        'メールアドレスまたはパスワードが違います'
 //      ];
+            if (!$user = \Auth_User::by_username($data['username'])) {
+                $this->failed();
+                $this->error = [
+                    E::UNAUTHNTICATED,
+                    'ニックネームまたはパスワードが違います'
+                ];
+                return;
+            }
 
             if (\Auth::login($data['username'], \Input::post('password'))) {
                 unset($this->body['data']);
