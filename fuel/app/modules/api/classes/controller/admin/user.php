@@ -40,11 +40,20 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-            if ($pwlength < 8 || $pwlength > 16) {
+//            if ($pwlength < 8 || $pwlength > 16) {
+//                $this->failed();
+//                $this->error = [
+//                    E::INVALID_PARAM,
+//                    'パスワードは8文字以上16文字以内で入力してください'
+//                ];
+//                return;
+//            }
+            if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i',$password)) {
+                // 英数字ではない場合
                 $this->failed();
                 $this->error = [
                     E::INVALID_PARAM,
-                    'パスワードは8文字以上16文字以内で入力してください'
+                    'パスワードは6文字以上16文字以内、英数混在で入力してください'
                 ];
                 return;
             }
@@ -367,11 +376,21 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-            if ($pwlength < 8 || $pwlength > 16) {
+//            if ($pwlength < 8 || $pwlength > 16) {
+//                $this->failed();
+//                $this->error = [
+//                    E::INVALID_PARAM,
+//                    'パスワードは8文字以上16文字以内で入力してください'
+//                ];
+//                return;
+//            }
+            // 英数字チェック
+            if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i', \Input::patch('new_password'))) {
+                // 英数字ではない場合
                 $this->failed();
                 $this->error = [
                     E::INVALID_PARAM,
-                    'パスワードは8文字以上16文字以内で入力してください'
+                    'パスワードは6文字以上16文字以内、英数混在で入力してください'
                 ];
                 return;
             }
@@ -503,11 +522,20 @@ class Controller_Admin_User extends Controller_Base
             ];
             return;
         }
-        if ($pwlength < 8 || $pwlength > 16) {
+//        if ($pwlength < 8 || $pwlength > 16) {
+//            $this->failed();
+//            $this->error = [
+//                E::INVALID_PARAM,
+//                'パスワードは8文字以上16文字以内で入力してください'
+//            ];
+//            return;
+//        }
+        if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i', \Input::post('password'))) {
+            // 英数字ではない場合
             $this->failed();
             $this->error = [
                 E::INVALID_PARAM,
-                'パスワードは8文字以上16文字以内で入力してください'
+                'パスワードは6文字以上16文字以内、英数混在で入力してください'
             ];
             return;
         }
