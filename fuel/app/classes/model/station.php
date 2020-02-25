@@ -7,6 +7,7 @@ class Model_Station extends Model_Base
   protected static $_properties = [
     'id',
     'route_id',
+    'order_id',
     'name',
     'name_kana',
     'latitude',
