@@ -40,8 +40,6 @@ class Model_Questionnaire extends Model_Base
       $headerQuestion3 = '設問3';
       $headerQuestion4 = '設問4';
       $headerCreate_date = '作成日';
-      $headerUpdate_date = '更新日';
-      $headerDelete_date = '削除日';
 
       $header_list = [
           [
@@ -51,8 +49,6 @@ class Model_Questionnaire extends Model_Base
               "$headerQuestion3",
               "$headerQuestion4",
               "$headerCreate_date",
-              "$headerUpdate_date",
-              "$headerDelete_date",
           ]
       ];
 
@@ -71,8 +67,6 @@ class Model_Questionnaire extends Model_Base
           $dataQuestion3 = $tmp['question3'];
           $dataQuestion4 = $tmp['question4'];
           $dataCreate_date = $tmp['created_at'];
-          $dataUpdate_date = $tmp['updated_at'];
-          $dataDelete_date = $tmp['deleted_at'];
 
           $dataList = [
               [
@@ -82,8 +76,7 @@ class Model_Questionnaire extends Model_Base
                   "$dataQuestion3",
                   "$dataQuestion4",
                   "$dataCreate_date",
-                  "$dataUpdate_date",
-                  "$dataDelete_date"
+
               ]
           ];
 
