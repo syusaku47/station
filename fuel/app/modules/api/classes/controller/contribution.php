@@ -218,12 +218,12 @@ class Controller_Contribution extends Controller_Base
       $email = $tmp['email'];
       $info['url'] = $contribution_url;
 
-      \Email::forge()
-        ->from('info')
-        ->to($email)
-        ->subject('【みんなの駅】担当に設定されました')
-        ->body(\View::forge('to_repairer', $info))
-        ->send(false);
+//      \Email::forge()
+//        ->from('info')
+//        ->to($email)
+//        ->subject('【みんなの駅】担当に設定されました')
+//        ->body(\View::forge('to_repairer', $info))
+//        ->send(false);
       unset($this->body['data']);
       $this->success();
 
@@ -236,6 +236,124 @@ class Controller_Contribution extends Controller_Base
       ];
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
+  }
+
+
+    public function post_questionnaire()
+    {
+        $question1_list = [
+            'TMNj5RPv',
+            '良い',
+            '普通',
+            '悪い'
+        ];
+
+        $question2_list = [
+            'TMNj5RPv',
+            '利用する',
+            '利用しない'
+        ];
+
+        $question3_list = [
+            'TMNj5RPv',
+            '項目が多い(入力が面倒)',
+            '文字の入力が使いにくい',
+            '写真の投稿が使いにくい',
+            '駅員に口答で伝えた方が早い'
+        ];
+
+        if(!$data = $this->verify([
+            'question1' => [
+                'label' => '設問1',
+                'validation' => [
+                    'required'
+                ]
+            ],
+            'question2' => [
+                'label' => '設問2',
+                'validation' => [
+                    'required'
+                ]
+            ],
+            'question3' => [
+                'label' => '設問3',
+                'default' => null
+            ]
+        ])){
+            return;
+        }
+        try {
+            if(!$user = \Auth_User::get_user()){
+                $this->failed();
+                $this->error = [
+                    E::UNAUTHNTICATED,
+                    '認証エラーです。'
+                ];
+                return;
+            }
+            $user_id = $user->id;
+            $question1 = \Input::post('question1');
+            $question2 = \Input::post('question2');
+            $question3 = \Input::post('question3');
+
+            if(array_search($question1,$question1_list) == false){
+                $this->failed();
+                $this->error = [
+                    E::INVALID_PARAM,
+                    '「設問1」は選択肢から回答を選んで下さい'
+                ];
+                return;
+            }
+            if(array_search($question2,$question2_list) == false){
+                $this->failed();
+                $this->error = [
+                    E::INVALID_PARAM,
+                    '「設問2」は選択肢から回答を選んで下さい'
+                ];
+                return;
+            }
+            if (!is_null($question3)) {
+                if (array_search($question3, $question3_list) == false) {
+                    $this->failed();
+                    $this->error = [
+                        E::INVALID_PARAM,
+                        '「設問3」は選択肢から回答を選んで下さい'
+                    ];
+                    return;
+                }
+            }
+
+            $questionnaire = \Model_Questionnaire::forge();
+            $questionnaire->user_id = $user_id;
+            $questionnaire->question1= $question1;
+            $questionnaire->question2= $question2;
+            $questionnaire->question3= $question3;
+
+        }catch (\Exception $e){
+            $this->failed();
+            $this->error = [
+                E::SERVER_ERROR,
+                'アンケートの送信に失敗しました。'
+            ];
+            $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+        }
+        $questionnaire->save();
+        $this->success();
+    }
+
+  public function get_questionnaires_csv()
+  {
+      try {
+          \Model_Questionnaire::csv_export();
+          $this->success();
+      }catch (\Exception $e){
+          $this->failed();
+          $this->error=[
+              E::SERVER_ERROR,
+              'アンケートCSVの出力に失敗しました'
+          ];
+      }
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
   }
 
   public function get_contribution_history()
