@@ -319,13 +319,15 @@ class Controller_Contribution extends Controller_Base
                 return;
             }
             if (!is_null($question3)) {
-                if (array_search($question3, $question3_list) == false) {
-                    $this->failed();
-                    $this->error = [
-                        E::INVALID_PARAM,
-                        '「設問3」は選択肢から回答を選んで下さい'
-                    ];
-                    return;
+                if (!empty($question3)) {
+                    if (array_search($question3, $question3_list) == false) {
+                        $this->failed();
+                        $this->error = [
+                            E::INVALID_PARAM,
+                            '「設問3」は選択肢から回答を選んで下さい'
+                        ];
+                        return;
+                    }
                 }
             }
             if (mb_strlen($question4) > 100) {
