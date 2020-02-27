@@ -250,12 +250,12 @@ class Controller_Admin_Contribution extends Controller_Base
             $email = $tmp['email'];
             $info['url'] = $contribution_url;
 
-            \Email::forge()
-                ->from('info')
-                ->to($email)
-                ->subject('【みんなの駅】担当に設定されました')
-                ->body(\View::forge('to_repairer', $info))
-                ->send(false);
+//            \Email::forge()
+//                ->from('info')
+//                ->to($email)
+//                ->subject('【みんなの駅】担当に設定されました')
+//                ->body(\View::forge('to_repairer', $info))
+//                ->send(false);
             unset($this->body['data']);
             $this->success();
 
@@ -600,12 +600,12 @@ class Controller_Admin_Contribution extends Controller_Base
                 $email = $tmp['email'];
                 $info['url'] = $contribution_url;
 
-                \Email::forge()
-                    ->from('info')
-                    ->to($email)
-                    ->subject('【みんなの駅】担当に設定されました')
-                    ->body(\View::forge('to_repairer', $info))
-                    ->send(false);
+//                \Email::forge()
+//                    ->from('info')
+//                    ->to($email)
+//                    ->subject('【みんなの駅】担当に設定されました')
+//                    ->body(\View::forge('to_repairer', $info))
+//                    ->send(false);
             }
 
             unset($this->body['data']);
@@ -830,12 +830,12 @@ class Controller_Admin_Contribution extends Controller_Base
                 $info['comment'] = $reject_text;
             }
 
-            \Email::forge()
-                ->from('info')
-                ->to($email)
-                ->subject('【みんなの駅】投稿がリジェクトされました')
-                ->body(\View::forge('reject', $info))
-                ->send(false);
+//            \Email::forge()
+//                ->from('info')
+//                ->to($email)
+//                ->subject('【みんなの駅】投稿がリジェクトされました')
+//                ->body(\View::forge('reject', $info))
+//                ->send(false);
 
             $contribute->status = 'リジェクト';
             if (!empty($comment_id)) {
@@ -989,12 +989,12 @@ class Controller_Admin_Contribution extends Controller_Base
                 }
             }
 
-            \Email::forge()
-                ->from('info')
-                ->to($email)
-                ->subject('【みんなの駅】修繕が完了しました')
-                ->body(\View::forge('complete', $info))
-                ->send(false);
+//            \Email::forge()
+//                ->from('info')
+//                ->to($email)
+//                ->subject('【みんなの駅】修繕が完了しました')
+//                ->body(\View::forge('complete', $info))
+//                ->send(false);
 
             $contribute->status = '完了';
             if(!empty($comment_id)){
