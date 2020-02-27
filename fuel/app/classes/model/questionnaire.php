@@ -10,6 +10,7 @@ class Model_Questionnaire extends Model_Base
     'question1',
     'question2',
     'question3',
+    'question4',
     'created_at',
     'updated_at',
     'deleted_at',
@@ -37,6 +38,7 @@ class Model_Questionnaire extends Model_Base
       $headerQuestion1 = '設問1';
       $headerQuestion2 = '設問2';
       $headerQuestion3 = '設問3';
+      $headerQuestion4 = '設問4';
       $headerCreate_date = '作成日';
       $headerUpdate_date = '更新日';
       $headerDelete_date = '削除日';
@@ -47,9 +49,10 @@ class Model_Questionnaire extends Model_Base
               "$headerQuestion1",
               "$headerQuestion2",
               "$headerQuestion3",
+              "$headerQuestion4",
               "$headerCreate_date",
               "$headerUpdate_date",
-              "$headerDelete_date"
+              "$headerDelete_date",
           ]
       ];
 
@@ -66,6 +69,7 @@ class Model_Questionnaire extends Model_Base
           $dataQuestion1 = $tmp['question1'];
           $dataQuestion2 = $tmp['question2'];
           $dataQuestion3 = $tmp['question3'];
+          $dataQuestion4 = $tmp['question4'];
           $dataCreate_date = $tmp['created_at'];
           $dataUpdate_date = $tmp['updated_at'];
           $dataDelete_date = $tmp['deleted_at'];
@@ -76,6 +80,7 @@ class Model_Questionnaire extends Model_Base
                   "$dataQuestion1",
                   "$dataQuestion2",
                   "$dataQuestion3",
+                  "$dataQuestion4",
                   "$dataCreate_date",
                   "$dataUpdate_date",
                   "$dataDelete_date"

@@ -278,7 +278,12 @@ class Controller_Contribution extends Controller_Base
             'question3' => [
                 'label' => '設問3',
                 'default' => null
+            ],
+            'question4' => [
+                'label' => '設問4',
+                'default' => null
             ]
+
         ])){
             return;
         }
@@ -295,6 +300,7 @@ class Controller_Contribution extends Controller_Base
             $question1 = \Input::post('question1');
             $question2 = \Input::post('question2');
             $question3 = \Input::post('question3');
+            $question4 = \Input::post('question4');
 
             if(array_search($question1,$question1_list) == false){
                 $this->failed();
@@ -322,12 +328,21 @@ class Controller_Contribution extends Controller_Base
                     return;
                 }
             }
+            if (mb_strlen($question4) > 100) {
+                $this->failed();
+                $this->error = [
+                    E::INVALID_PARAM,
+                    'ご意見は100字以内で入力してください'
+                ];
+                return;
+            }
 
             $questionnaire = \Model_Questionnaire::forge();
             $questionnaire->user_id = $user_id;
             $questionnaire->question1= $question1;
             $questionnaire->question2= $question2;
             $questionnaire->question3= $question3;
+            $questionnaire->question4= $question4;
 
         }catch (\Exception $e){
             $this->failed();
