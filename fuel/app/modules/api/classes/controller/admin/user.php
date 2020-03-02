@@ -455,7 +455,8 @@ class Controller_Admin_User extends Controller_Base
 
             $email_user = [];
             $email_user['user'] = $user;
-            $url_base = \Fuel::$env == \FUEL::PRODUCTION ? 'https://www.minnanoeki.jp/' : \Uri::base(false);
+//            $url_base = \Fuel::$env == \FUEL::PRODUCTION ? 'https://www.minnanoeki.jp/' : \Uri::base(false);
+            $url_base = \Uri::base(false);
             $reissue_url = $url_base . $path;
             $email_user['reissue_url'] = $reissue_url;
             $this->data = $reissue_url;
