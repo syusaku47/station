@@ -600,12 +600,12 @@ class Controller_Admin_Contribution extends Controller_Base
                 $email = $tmp['email'];
                 $info['url'] = $contribution_url;
 
-//                \Email::forge()
-//                    ->from('info')
-//                    ->to($email)
-//                    ->subject('【みんなの駅】担当に設定されました')
-//                    ->body(\View::forge('to_repairer', $info))
-//                    ->send(false);
+                \Email::forge()
+                    ->from('info')
+                    ->to($email)
+                    ->subject('【みんなの駅】担当に設定されました')
+                    ->body(\View::forge('to_repairer', $info))
+                    ->send(false);
             }
 
             unset($this->body['data']);
