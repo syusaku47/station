@@ -22,9 +22,14 @@ class Model_Questionnaire extends Model_Base
     'deleted_at',
   ];
 
+    /**
+     * @throws Exception
+     * @author 冨岡
+     * @modifire 冨岡 2020/03/16 csvエクスポート日付降順
+     */
   public static function csv_export()
   {
-      $questionnaires = \Model_Questionnaire::find('all');
+      $questionnaires = \Model_Questionnaire::find('all', array("order_by" => array("created_at" => "desc")));
 
       //CSV形式で情報をファイルに出力のための準備
       $csvFileName = '/tmp/' . time() . rand() . '.csv';
