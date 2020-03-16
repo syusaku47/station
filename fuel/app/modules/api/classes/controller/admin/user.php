@@ -1,6 +1,13 @@
 <?php
 
 namespace Api;
+/**
+ * Class Controller_User
+ * @package Api
+ * @author 津山
+ * @modifier 冨岡 2020/03/16 [Modify]ユーザ文字数バリデーション
+ */
+
 class Controller_Admin_User extends Controller_Base
 {
     public function post_sign_up()
@@ -18,11 +25,11 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-            if (mb_strlen($username) > 20) {
+            if (mb_strlen($username) > 255) {
                 $this->failed();
                 $this->error = [
                     E::INVALID_PARAM,
-                    'ユーザ名は20文字以内で入力してください'
+                    'ユーザ名は255文字以内で入力してください'
                 ];
 
                 return;
