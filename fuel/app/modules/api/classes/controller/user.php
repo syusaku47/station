@@ -343,6 +343,10 @@ class Controller_User extends Controller_Base
         }
     }
 
+    /**
+     * @Author 津山
+     * @Modifier 冨岡 2020/03/25 変更前後で同じパスワード不可
+     */
     public function patch_change_password()
     {
         try {
@@ -381,6 +385,14 @@ class Controller_User extends Controller_Base
             if ($user->password == $old_password_hash) {
                 $password = \Input::patch('new_password');
                 $new_password = \Auth::hash_password($password);
+                if ($old_password == $password)
+                {
+                    $this->failed();
+                    $this->error = [
+                        E::INVALID_REQUEST,
+                        '変更前と異なるパスワードを設定してください'
+                    ];
+                }
                 $user = \Auth_User::get_user();
                 $user->password = $new_password;
                 $user->save();

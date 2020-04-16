@@ -621,7 +621,24 @@ class Controller_Admin_Contribution extends Controller_Base
     }
 
 
-    //Add 200115 冨岡 絞り込み検索ステータス非表示
+    /**
+     * @param bool $status
+     * @param bool $route
+     * @param bool $station
+     * @param string $status_order
+     * @param string $created_at_order
+     * @param string $route_order
+     * @param string $station_order
+     * @param string $created_search
+     * @param string $routes_search
+     * @param string $stations_search
+     * @param string $facility_search
+     * @param string $repairer_search
+     * @param string $status_valid
+     * @author 津山
+     * @modifier 冨岡 2020/01/15 冨岡 絞り込み検索,ステータス非表示
+     * @modifiwe 冨岡 2020/03/25 冨岡 路線、駅ソート処理変更
+     */
     public function get_contribution_list($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc',$created_search = "",$routes_search = "",$stations_search = "",$facility_search = "",$repairer_search = "",$status_valid="")
     {
         try {
@@ -670,17 +687,17 @@ class Controller_Admin_Contribution extends Controller_Base
             //MEMO 以下昇順降順処理
             if ($route == 'true') {
                 if ($route_order == 'desc') {
-                    $order_base[] = ' r.name_kana desc ';
+                    $order_base[] = ' r.id desc ';
                 } else {
-                    $order_base[] = ' r.name_kana asc ';
+                    $order_base[] = ' r.id asc ';
                 }
             }
 
             if ($station == 'true') {
                 if ($station_order == 'desc') {
-                    $order_base[] = ' s.name_kana desc ';
+                    $order_base[] = ' s.display_id desc ';
                 } else {
-                    $order_base[] = ' s.name_kana asc ';
+                    $order_base[] = ' s.display_id asc ';
                 }
             }
 
