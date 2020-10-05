@@ -653,6 +653,84 @@ class Controller_Admin_User extends Controller_Base
             $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
         }
     }
+
+    public function post_export()
+	{
+		try{
+			$sql = <<<h
+SELECT 
+	users.id as user_id,
+	users.username as user_username,
+	users.email as user_email,
+	users.created_at as user_created_at
+FROM
+	users
+h;
+
+			$data = \DB::query($sql)->execute();
+			if(count($data) === 0){
+				$this->error = [
+					E::NOT_FOUND,
+					'情報が存在しません。'
+				];
+			}
+			foreach ($data as $value){
+				$data_list[] = [
+					'ID' => $value['user_id'],
+					'ユーザ名' => $value['user_username'],
+					'メールアドレス' => $value['user_email'],
+					'登録日' => date('Y/m/d H:i:s',$value['user_created_at'])
+				];
+			}
+
+			$head = [
+				'ID',
+				'ユーザ名',
+				'メールアドレス',
+				'登録日'
+			];
+
+			// 書き込み用ファイル開く
+			$csv_file_path = 'userss_list' . time() . rand() . '.csv';
+			$f = fopen($csv_file_path, 'w');
+			if ($f) {
+				// カラムの書き込み
+				mb_convert_variables('SJIS-win', 'UTF-8', $head);
+				fputcsv($f, $head);
+
+				// データ書き込み
+				foreach ($data_list as $data) {
+					mb_convert_variables('SJIS-win', 'UTF-8', $data);
+					mb_convert_encoding( "髙﨑纊①㈱㌔ｱｲｳｴｵあいうえおabc", "UTF-8", "SJIS-win");
+					fputcsv($f, $data);
+				}
+			}
+			// ファイルを閉じる
+			fclose($f);
+
+			$filename = "users_list.csv";
+			//ホワイトスペース相当の文字をアンダースコアに
+			$filename = preg_replace('/\\s/u', '_', $filename);
+			//ファイル名に使えない文字をアンダースコアに
+			$filename = str_replace(array ('\\', '/', ':', '*', '?', '"', '<', '>', '|'), '_', $filename);
+			header('Content-Encoding: UTF-8');
+			header('Content-Type: text/csv');
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
+			header('Content-Transfer-Encoding: binary');
+			readfile($csv_file_path);
+			unlink($csv_file_path);
+			exit();
+		}
+		catch (\Exception $e) {
+			$this->failed();
+			$this->error = [
+				E::SERVER_ERROR,
+				'CSVエクスポート処理に失敗しました。'
+			];
+			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+		}
+	}
+
     public function get_test()
     {
         $reissue_url = '/getri';
