@@ -57,7 +57,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
 site.name as site_name,p.site_text as site_text,p.facility_id as facility_id, f.name as facility_name, p.facility_text as facility_text,p.overview as overview,p.remarks as remarks,p.repairer_id as repairer_id, rp.name as repairer_name, p.reject_id as reject_id,c.comment as reject_comment, p.reject_text as reject_text, p.complete_id as complete_id, c2.comment as complete_comment, p.complete_text as complete_text, p.thumbnail_before1 as thumbnail_before1, p.thumbnail_before2 as thumbnail_before2, p.thumbnail_before3 as thumbnail_before3, p.thumbnail_after1 as thumbnail_after1,p.thumbnail_after2 as thumbnail_after2,p.thumbnail_after3 as thumbnail_after3,p.created_at as created_at,p.updated_at as updated_at 
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
   inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id inner join repairers rp on p.repairer_id = rp.id left join comments c on p.reject_id = c.id left join comments c2 on p.complete_id = c2.id where um.key = \'nickname\' and p.id = :contribution_id '
-        );
+         );
         $query->bind('contribution_id', $contribution_id);
         return $query->execute();
     }
@@ -107,7 +107,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         }else{
             $created_search = $created_search;
         }
-
+        // 2021/2/9 片渕 完了を表示するように修正
         if($status_valid == (string)1){
             $status_valid = "完了";
         }else{
@@ -117,7 +117,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id,p.child_id as child_id, um.value as nickname, p.route_id as route_id, r.name as route_name, r.name_kana as route_name_kana, p.station_id as station_id,s.name as station_name, s.name_kana as station_name_kana, p.status as status,p.site_id as site_id,
 site.name as site_name,p.site_text as site_text,p.facility_id as facility_id, f.name as facility_name, p.facility_text as facility_text,p.overview as overview,p.remarks as remarks,p.repairer_id as repairer_id, rp.name as repairer_name, p.reject_id as reject_id,c.comment as reject_comment, p.reject_text as reject_text, p.complete_id as complete_id, c2.comment as complete_comment, p.complete_text as complete_text, p.thumbnail_before1 as thumbnail_before1, p.thumbnail_before2 as thumbnail_before2, p.thumbnail_before3 as thumbnail_before3, p.thumbnail_after1 as thumbnail_after1,p.thumbnail_after2 as thumbnail_after2,p.thumbnail_after3 as thumbnail_after3,p.created_at as created_at,p.updated_at as updated_at
 from posts p inner join routes r on p.route_id = r.id  inner join  stations s on p.station_id = s.id
-  inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id inner join repairers rp on p.repairer_id = rp.id left join comments c on p.reject_id = c.id left join comments c2 on p.complete_id = c2.id where :routes_search in ("" , p.route_id) and :stations_search in ("" , p.station_id) and :facility_search in ("" , p.facility_id) and :repairer_search in ("" , p.repairer_id) and p.status not like :status_valid and case when p.created_at like :created_search then :created_search when :created_search = "" then p.created_at end and um.key = \'nickname\' order by '.$order
+  inner join sites site on p.site_id = site.id  inner join facilities f on p.facility_id = f.id inner join users_metadata um on p.contributor_id = um.parent_id inner join repairers rp on p.repairer_id = rp.id left join comments c on p.reject_id = c.id left join comments c2 on p.complete_id = c2.id where :routes_search in ("" , p.route_id) and :stations_search in ("" , p.station_id) and :facility_search in ("" , p.facility_id) and :repairer_search in ("" , p.repairer_id) and case when p.created_at like :created_search then :created_search when :created_search = "" then p.created_at end and p.deleted_at IS NULL and um.key = \'nickname\' order by '.$order
             .' limit '.$limit.' offset '.$offset);
 
         //\Log::error('query : '.$query);

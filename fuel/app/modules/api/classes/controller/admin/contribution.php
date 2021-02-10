@@ -637,6 +637,70 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
+	// 2020/2/9片渕 投稿削除機能実装
+	public function delete_remove ()
+	{
+		try {
+			if (!$user = \Auth_User::get_user()) {
+				$this->failed();
+				$this->error = [
+					E::UNAUTHNTICATED,
+					'認証エラーです'
+				];
+				return;
+			}
+	
+			if ($user->group_id != 2) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'権限がありません'
+				];
+				return;
+			}
+
+			// 引数idを取得
+			$id = \Input::get('id');
+			if (is_null($id)) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'idは必須です'
+				];
+				return;
+			}
+
+			if (!is_numeric($id)) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'idは整数型を指定してください'
+				];
+				return;
+			}
+
+			if (!$delete = \Model_Post::find($id)) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'指定した投稿データは存在しません'
+				];
+				return;
+			}
+			$delete->delete();
+			$this->success();
+			
+		}
+		catch (\Exception $e) {
+			$this->failed();
+			$this->error = [
+				E::SERVER_ERROR,
+				'削除に失敗しました'
+			];
+			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+		}
+	}
+
 
 	/**
 	 * @param bool $status
