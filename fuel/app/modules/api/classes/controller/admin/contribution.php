@@ -710,17 +710,18 @@ class Controller_Admin_Contribution extends Controller_Base
 	 * @param string $created_at_order
 	 * @param string $route_order
 	 * @param string $station_order
-	 * @param string $created_search
 	 * @param string $routes_search
 	 * @param string $stations_search
 	 * @param string $facility_search
 	 * @param string $repairer_search
-	 * @param string $status_valid
+	 * @param string $status_search
+	 * @param string $start_date
+	 * @param string $end_date
 	 * @author 津山
 	 * @modifier 冨岡 2020/01/15 冨岡 絞り込み検索,ステータス非表示
 	 * @modifiwe 冨岡 2020/03/25 冨岡 路線、駅ソート処理変更
 	 */
-	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $created_search = "", $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_valid = "")
+	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "")
 	{
 		try {
 
@@ -755,12 +756,13 @@ class Controller_Admin_Contribution extends Controller_Base
 			$created_at_order = \Input::get('created_at_order'); //MEMO created_at_order取得
 			$route_order = \Input::get('route_order'); //MEMO route_order取得
 			$station_order = \Input::get('station_order'); //MEMO station_order取得
-			$created_search = \Input::get('created_search');
 			$routes_search = \Input::get('routes_search');
 			$stations_search = \Input::get('stations_search');
 			$facility_search = \Input::get('facility_search');
 			$repairer_search = \Input::get('repairer_search');
-			$status_valid = \Input::get('status_valid');
+			$status_search = \Input::get('status_search');
+			$start_date = \Input::get('start_date');
+			$end_date = \Input::get('end_date');
 			$order_base = array (); //MEMO 配列作成
 			$search_material = array ();
 
@@ -796,12 +798,6 @@ class Controller_Admin_Contribution extends Controller_Base
 				$order_base[] = ' p.created_at desc ';
 			}
 
-			if ($created_search == "") {
-				$search_material['created_search'] = "";
-			} else {
-				$search_material['created_search'] = $created_search;
-			}
-
 			if ($routes_search == "") {
 				$search_material['routes_search'] = "";
 			} else {
@@ -826,10 +822,22 @@ class Controller_Admin_Contribution extends Controller_Base
 				$search_material['repairer_search'] = $repairer_search;
 			}
 
-			if ($status_valid == "") {
-				$search_material['status_valid'] = "";
+			if ($status_search == "") {
+				$search_material['status_search'] = "";
 			} else {
-				$search_material['status_valid'] = $status_valid;
+				$search_material['status_search'] = $status_search;
+			}
+
+			if ($start_date == "") {
+				$search_material['start_date'] = "";
+			} else {
+				$search_material['start_date'] = $start_date;
+			}
+
+			if ($end_date == "") {
+				$search_material['end_date'] = "";
+			} else {
+				$search_material['end_date'] = $end_date;
 			}
 
 			$order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ
