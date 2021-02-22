@@ -66,6 +66,21 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
+  public function get_repairers_list()
+  {
+    try {
+      $this->data = \Model_Repairer::query()->select('id', 'name')->get();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '情報担当の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
   public function get_closest_station()
   {
     try {

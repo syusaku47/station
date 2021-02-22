@@ -39,21 +39,22 @@ class Model_Questionnaire extends Model_Base
       if ($res === FALSE) {
           throw new Exception('ファイルの書き込みに失敗しました。');
       }
+      $headerCreate_date = '作成日';
       $headerUser = 'ユーザー';
       $headerQuestion1 = '設問1';
       $headerQuestion2 = '設問2';
       $headerQuestion3 = '設問3';
       $headerQuestion4 = '設問4';
-      $headerCreate_date = '作成日';
 
+      // 片渕 2020/2/9 アンケートcsv 作成日を先頭に項目順を変更
       $header_list = [
           [
+              "$headerCreate_date",
               "$headerUser",
               "$headerQuestion1",
               "$headerQuestion2",
               "$headerQuestion3",
               "$headerQuestion4",
-              "$headerCreate_date",
           ]
       ];
 
@@ -66,22 +67,21 @@ class Model_Questionnaire extends Model_Base
 //          $questionnaire = $tmp;
 
           $user = \Auth_User::find($tmp['user_id']);
+          $dataCreate_date = $tmp['created_at'];
           $dataUser_name = $user->username;
           $dataQuestion1 = $tmp['question1'];
           $dataQuestion2 = $tmp['question2'];
           $dataQuestion3 = $tmp['question3'];
           $dataQuestion4 = $tmp['question4'];
-          $dataCreate_date = $tmp['created_at'];
 
           $dataList = [
               [
+                  "$dataCreate_date",
                   "$dataUser_name",
                   "$dataQuestion1",
                   "$dataQuestion2",
                   "$dataQuestion3",
                   "$dataQuestion4",
-                  "$dataCreate_date",
-
               ]
           ];
 
@@ -99,6 +99,6 @@ class Model_Questionnaire extends Model_Base
       //echo 'test';//lettersリストの出力処理
       readfile($csvFileName);
       exit;
-  }
+}
 
 }
