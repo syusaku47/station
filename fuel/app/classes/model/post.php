@@ -129,14 +129,55 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $where_routes = $where_routes . ") and";
         }
 
-        // 設備名で絞り込み　保留
+        // 設備名で絞り込み
         $where_facility = '';
         if (is_array($facility_search) && $facility_search[0] !== '')
         {
             $where_facility = "f.name in (";
             foreach ($facility_search as $i => $val)
             {
-                $where_facility = $where_facility . "'" . $val . "'";
+                $facility = '';
+				switch ($val)
+				{
+					case 0: $facility = '通路'; break;
+					case 1: $facility = '天井'; break;
+					case 2: $facility = '照明'; break;
+					case 3: $facility = 'ホームドア'; break;
+					case 4: $facility = '柱'; break;
+                    case 5: $facility = '電光掲示板'; break;
+					case 6: $facility = '点字ブロック'; break;
+					case 7: $facility = '自動販売機'; break;
+					case 8: $facility = 'スピーカー'; break;
+					case 9: $facility = '窓'; break;
+                    case 10: $facility = '案内板'; break;
+                    case 11: $facility = '売店'; break;
+					case 12: $facility = '手すり'; break;
+					case 13: $facility = '壁'; break;
+					case 14: $facility = '券売機'; break;
+					case 15: $facility = '改札機'; break;
+                    case 16: $facility = '窓口'; break;
+					case 17: $facility = '自動ドア'; break;
+					case 18: $facility = 'ガラス'; break;
+					case 19: $facility = '床'; break;
+					case 20: $facility = '操作ボタン'; break;
+                    case 21: $facility = 'ケーブル'; break;
+					case 22: $facility = 'ステップ'; break;
+					case 23: $facility = '乗り口'; break;
+					case 24: $facility = '降り口'; break;
+					case 25: $facility = '便器（小）'; break;
+                    case 26: $facility = '便器（大）'; break;
+					case 27: $facility = '個室'; break;
+					case 28: $facility = 'ドア'; break;
+					case 29: $facility = '備品'; break;
+					case 30: $facility = '洗面台'; break;
+                    case 31: $facility = '鏡'; break;
+					case 32: $facility = 'エアコン'; break;
+					case 33: $facility = 'ベンチ'; break;
+					case 34: $facility = '階段'; break;
+					case 35: $facility = 'その他'; break;
+					default: $facility = '';
+				}
+                $where_facility = $where_facility . "'" . $facility . "'";
                 $where_facility = count($facility_search) - 1 !== $i ? $where_facility . ',' : $where_facility;
             }
             $where_facility = $where_facility . ") and";
