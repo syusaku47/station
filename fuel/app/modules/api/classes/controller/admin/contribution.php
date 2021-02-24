@@ -721,7 +721,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	 * @modifier 冨岡 2020/01/15 冨岡 絞り込み検索,ステータス非表示
 	 * @modifiwe 冨岡 2020/03/25 冨岡 路線、駅ソート処理変更
 	 */
-	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "")
+	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "", $architecture_ward_search = "")
 	{
 		try {
 
@@ -763,6 +763,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$status_search = \Input::get('status_search');
 			$start_date = \Input::get('start_date');
 			$end_date = \Input::get('end_date');
+			$architecture_ward_search = \Input::get('architecture_ward_search');
 			$order_base = array (); //MEMO 配列作成
 			$search_material = array ();
 
@@ -838,6 +839,12 @@ class Controller_Admin_Contribution extends Controller_Base
 				$search_material['end_date'] = "";
 			} else {
 				$search_material['end_date'] = $end_date;
+			}
+
+			if ($architecture_ward_search == "") {
+				$search_material['architecture_ward_search'] = '';
+			} else {
+				$search_material['architecture_ward_search'] = $architecture_ward_search;
 			}
 
 			$order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ

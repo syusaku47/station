@@ -102,6 +102,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $status_search = $status_search;
         $start_date = $start_date;
         $end_date = $end_date;
+        $architecture_ward_search = $architecture_ward_search;
 
         // 修理業者で絞り込み
         $where_repairer = '';
@@ -217,14 +218,13 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
                 $where_status = count($status_search) - 1 !== $i ? $where_status . ',' : $where_status;
             }
             $where_status = $where_status . ") and";
-            \Log::debug($where_status);
         }
 
         // 日付で絞り込み
         $where_day = '';
         if ($start_date !== '' && $end_date !== '')
         {
-            $where_day = "p.created_at >= '${start_date}' and p.created_at <= '${end_date}' and ";
+            $where_day = "p.created_at >= '${start_date}' and p.created_at <= '${end_date} 23:59:59' and ";
         }
         else if ($start_date !== '')
         {
@@ -232,7 +232,20 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         }
         else if ($end_date !== '')
         {
-            $where_day = "p.created_at <= '${end_date}' and ";
+            $where_day = "p.created_at <= '${end_date} 23:59:59' and ";
+        }
+
+        // 建築区で絞り込み
+        $where_architecture_ward = '';
+        if (is_array($architecture_ward_search) && $architecture_ward_search[0] !== '')
+        {
+            $where_architecture_ward = "s.architecture_ward_id in (";
+            foreach ($architecture_ward_search as $i => $val)
+            {
+                $where_architecture_ward = $where_architecture_ward . $val;
+                $where_architecture_ward = count($architecture_ward_search) - 1 !== $i ? $where_architecture_ward . ',' : $where_architecture_ward;
+            }
+            $where_architecture_ward = $where_architecture_ward . ") and";
         }
 
 //         $query = \DB::query('select p.id as id,p.parent_id as parent_id,p.contributor_id as contributor_id,p.child_id as child_id, um.value as nickname, p.route_id as route_id, r.name as route_name, r.name_kana as route_name_kana, p.station_id as station_id,s.name as station_name, s.name_kana as station_name_kana, p.status as status,p.site_id as site_id,
@@ -298,6 +311,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             ' . $where_facility . '
             ' . $where_status . '
             ' . $where_day . '
+            ' . $where_architecture_ward . '
             p.deleted_at IS NULL and
             um.key = \'nickname\' order by '.$order .' limit '.$limit.' offset '.$offset;
         $query = \DB::query($sql);
@@ -311,6 +325,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $query->bind('stations_search', $stations_search);
         $query->bind('start_date', $start_date);
         $query->bind('end_date', $end_date);
+        $query->bind('architecture_ward_search', $architecture_ward_search);
 
         $list = $query->execute();
         $count = \DB::count_last_query();
@@ -348,6 +363,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $status_search = $status_search;
         $start_date = $start_date;
         $end_date = $end_date;
+        $architecture_ward_search = $architecture_ward_search;
 
         // 修理業者で絞り込み
         $where_repairer = '';
@@ -375,14 +391,55 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $where_routes = $where_routes . ") and";
         }
 
-        // 設備名で絞り込み　保留
+        // 設備名で絞り込み
         $where_facility = '';
         if (is_array($facility_search) && $facility_search[0] !== '')
         {
             $where_facility = "f.name in (";
             foreach ($facility_search as $i => $val)
             {
-                $where_facility = $where_facility . "'" . $val . "'";
+                $facility = '';
+				switch ($val)
+				{
+					case 0: $facility = '通路'; break;
+					case 1: $facility = '天井'; break;
+					case 2: $facility = '照明'; break;
+					case 3: $facility = 'ホームドア'; break;
+					case 4: $facility = '柱'; break;
+                    case 5: $facility = '電光掲示板'; break;
+					case 6: $facility = '点字ブロック'; break;
+					case 7: $facility = '自動販売機'; break;
+					case 8: $facility = 'スピーカー'; break;
+					case 9: $facility = '窓'; break;
+                    case 10: $facility = '案内板'; break;
+                    case 11: $facility = '売店'; break;
+					case 12: $facility = '手すり'; break;
+					case 13: $facility = '壁'; break;
+					case 14: $facility = '券売機'; break;
+					case 15: $facility = '改札機'; break;
+                    case 16: $facility = '窓口'; break;
+					case 17: $facility = '自動ドア'; break;
+					case 18: $facility = 'ガラス'; break;
+					case 19: $facility = '床'; break;
+					case 20: $facility = '操作ボタン'; break;
+                    case 21: $facility = 'ケーブル'; break;
+					case 22: $facility = 'ステップ'; break;
+					case 23: $facility = '乗り口'; break;
+					case 24: $facility = '降り口'; break;
+					case 25: $facility = '便器（小）'; break;
+                    case 26: $facility = '便器（大）'; break;
+					case 27: $facility = '個室'; break;
+					case 28: $facility = 'ドア'; break;
+					case 29: $facility = '備品'; break;
+					case 30: $facility = '洗面台'; break;
+                    case 31: $facility = '鏡'; break;
+					case 32: $facility = 'エアコン'; break;
+					case 33: $facility = 'ベンチ'; break;
+					case 34: $facility = '階段'; break;
+					case 35: $facility = 'その他'; break;
+					default: $facility = '';
+				}
+                $where_facility = $where_facility . "'" . $facility . "'";
                 $where_facility = count($facility_search) - 1 !== $i ? $where_facility . ',' : $where_facility;
             }
             $where_facility = $where_facility . ") and";
@@ -428,7 +485,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $where_day = '';
         if ($start_date !== '' && $end_date !== '')
         {
-            $where_day = "p.created_at >= '${start_date}' and p.created_at <= '${end_date}' and ";
+            $where_day = "p.created_at >= '${start_date}' and p.created_at <= '${end_date} 23:59:59' and ";
         }
         else if ($start_date !== '')
         {
@@ -436,7 +493,20 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         }
         else if ($end_date !== '')
         {
-            $where_day = "p.created_at <= '${end_date}' and ";
+            $where_day = "p.created_at <= '${end_date} 23:59:59' and ";
+        }
+
+        // 建築区で絞り込み
+        $where_architecture_ward = '';
+        if (is_array($architecture_ward_search) && $architecture_ward_search[0] !== '')
+        {
+            $where_architecture_ward = "s.architecture_ward_id in (";
+            foreach ($architecture_ward_search as $i => $val)
+            {
+                $where_architecture_ward = $where_architecture_ward . $val;
+                $where_architecture_ward = count($architecture_ward_search) - 1 !== $i ? $where_architecture_ward . ',' : $where_architecture_ward;
+            }
+            $where_architecture_ward = $where_architecture_ward . ") and";
         }
 
         $sql =
@@ -494,6 +564,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             ' . $where_facility . '
             ' . $where_status . '
             ' . $where_day . '
+            ' . $where_architecture_ward . '
             p.deleted_at IS NULL and
             um.key = \'nickname\' order by '.$order;
         $query = \DB::query($sql);
@@ -507,6 +578,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $query->bind('stations_search', $stations_search);
         $query->bind('start_date', $start_date);
         $query->bind('end_date', $end_date);
+        $query->bind('architecture_ward_search', $architecture_ward_search);
 
         $list = $query->execute();
 
