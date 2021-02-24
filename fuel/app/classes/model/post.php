@@ -350,6 +350,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
     /**
      * @throws Exception
      * @author 片渕
+     * @add 片渕 2021/02/22 投稿一覧CSV出力
      */
     public static function csv_export($order,$search_material,$to_array = false)
     {
@@ -599,8 +600,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         if ($res === FALSE) {
             throw new Exception('ファイルの書き込みに失敗しました。');
         }
-
-        // 片渕 2020/2/9 アンケートcsv 作成日を先頭に項目順を変更
+        
         $header_list = [["ID","ステータス","担当","投稿日","投稿者","路線","駅","場所","設備","事象","写真","備考","リジェクト理由"]];
 
         foreach ($header_list as $headerinfo){
@@ -619,7 +619,12 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $dataSite = $tmp['site_name'];
             $dataFacility = $tmp['facility_name'];
             $dataOverview = $tmp['overview'];
-            $dataThumbnail = $tmp['thumbnail_before1'];
+            $tmp['thumbnail_before1'] .= $tmp['thumbnail_before1'] ? PHP_EOL : '';
+            $tmp['thumbnail_before2'] .= $tmp['thumbnail_before2'] ? PHP_EOL : '';
+            $tmp['thumbnail_before3'] .= $tmp['thumbnail_before3'] ? PHP_EOL : '';
+            $tmp['thumbnail_after1'] .= $tmp['thumbnail_after1'] ? PHP_EOL : '';
+            $tmp['thumbnail_after2'] .= $tmp['thumbnail_after2'] ? PHP_EOL : '';
+            $dataThumbnail = $tmp['thumbnail_before1'] . $tmp['thumbnail_before2'] . $tmp['thumbnail_before3'] . $tmp['thumbnail_after1'] . $tmp['thumbnail_after2'] . $tmp['thumbnail_after3'];
             $dataRemarks = $tmp['remarks'];
             $dataCompletionReason = $tmp['complete_comment'];
 
