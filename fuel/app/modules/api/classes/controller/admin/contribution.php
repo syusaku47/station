@@ -841,10 +841,14 @@ class Controller_Admin_Contribution extends Controller_Base
 				$search_material['end_date'] = $end_date;
 			}
 
+			$user->to_array();
 			if ($architecture_ward_search == "") {
-				$search_material['architecture_ward_search'] = '';
+				$search_material['architecture_ward_search'] = "";
 			} else {
 				$search_material['architecture_ward_search'] = $architecture_ward_search;
+				// usersテーブルに選択した建築区情報を保持
+				$query = \DB::update('users');
+				$query->value('selected_architecture_ward', serialize($architecture_ward_search))->where('id', $user['id'])->execute();
 			}
 
 			$order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ

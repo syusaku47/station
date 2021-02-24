@@ -621,7 +621,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $dataOverview = $tmp['overview'];
             $dataThumbnail = $tmp['thumbnail_before1'];
             $dataRemarks = $tmp['remarks'];
-            $dataCompletionReason = '完了理由';
+            $dataCompletionReason = $tmp['complete_comment'];
 
             $dataList = [
                 [
@@ -656,7 +656,6 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         readfile($csvFileName);
         exit;
     }
-
 }
 
 

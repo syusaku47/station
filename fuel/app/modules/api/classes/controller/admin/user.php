@@ -330,6 +330,8 @@ class Controller_Admin_User extends Controller_Base
             $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s", $user['previous_login']);
             $info['created_at'] = date("Y-m-d H:i:s", $user['created_at']);
             $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s", $user['updated_at']);
+            $query = \DB::select('selected_architecture_ward')->from('users')->where('id', $user['id'])->execute()->as_array();
+            $info['selected_architecture_ward'] = $query[0]['selected_architecture_ward'] ? unserialize($query[0]['selected_architecture_ward']) : null;
 
             $this->success();
             $this->data = $info;
