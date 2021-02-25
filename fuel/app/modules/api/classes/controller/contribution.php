@@ -405,7 +405,7 @@ class Controller_Contribution extends Controller_Base
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
   }
 
-  // 2021/2/22 片渕 投稿一覧CSV出力実装
+  // 2021/02/22 片渕 投稿一覧CSV出力実装
   public function get_postslist_csv(
     $status = false,
     $route = false,

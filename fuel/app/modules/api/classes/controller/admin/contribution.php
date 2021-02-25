@@ -720,6 +720,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	 * @author 津山
 	 * @modifier 冨岡 2020/01/15 冨岡 絞り込み検索,ステータス非表示
 	 * @modifiwe 冨岡 2020/03/25 冨岡 路線、駅ソート処理変更
+	 * @modifire 片渕 2021/02/24 片渕 期日、路線、駅、設備、情報担当、ステータス、建築区絞り込み
 	 */
 	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "", $architecture_ward_search = "")
 	{
@@ -846,7 +847,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				$search_material['architecture_ward_search'] = "";
 			} else {
 				$search_material['architecture_ward_search'] = $architecture_ward_search;
-				// usersテーブルに選択した建築区情報を保持
+				// usersテーブルにユーザ毎に選択した建築区情報を保持
 				$query = \DB::update('users');
 				$query->value('selected_architecture_ward', serialize($architecture_ward_search))->where('id', $user['id'])->execute();
 			}
