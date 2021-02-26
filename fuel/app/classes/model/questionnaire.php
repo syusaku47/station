@@ -26,6 +26,7 @@ class Model_Questionnaire extends Model_Base
      * @throws Exception
      * @author 冨岡
      * @modifire 冨岡 2020/03/16 csvエクスポート日付降順
+     * @modifire 片渕 2021/02/09 アンケートcsv作成日を先頭に項目順を変更
      */
   public static function csv_export()
   {
@@ -46,7 +47,6 @@ class Model_Questionnaire extends Model_Base
       $headerQuestion3 = '設問3';
       $headerQuestion4 = '設問4';
 
-      // 片渕 2020/2/9 アンケートcsv 作成日を先頭に項目順を変更
       $header_list = [
           [
               "$headerCreate_date",

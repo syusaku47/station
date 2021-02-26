@@ -66,6 +66,7 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
+  // 2021/02/19 片渕 情報担当一覧取得API実装
   public function get_repairers_list()
   {
     try {
@@ -76,6 +77,22 @@ class Controller_Contribution extends Controller_Base
       $this->error = [
         E::SERVER_ERROR,
         '情報担当の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
+  // 2021/02/22 建築区一覧取得API実装
+  public function get_architecturewards_list()
+  {
+    try {
+      $this->data = \Model_Architectureward::query()->select('id', 'name')->get();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '建築区の取得に失敗しました'
       ];
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
@@ -386,6 +403,137 @@ class Controller_Contribution extends Controller_Base
           ];
       }
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+  }
+
+  // 2021/02/22 片渕 投稿一覧CSV出力実装
+  public function get_postslist_csv(
+    $status = false,
+    $route = false,
+    $station = false,
+    $status_order = 'asc',
+    $created_at_order = 'desc',
+    $route_order = 'asc',
+    $station_order = 'asc',
+    $routes_search = "",
+    $stations_search = "",
+    $facility_search = "",
+    $repairer_search = "",
+    $status_search = "",
+    $start_date = "",
+    $end_date = "",
+    $architecture_ward_search = ""
+  )
+  {
+    try {
+        $status = \Input::get('status'); //MEMO status 取得
+        $route = \Input::get('route');//MEMO route 取得
+        $station = \Input::get('station');//MEMO station 取得
+        $status_order = \Input::get('status_order'); //MEMO status_order取得
+        $created_at_order = \Input::get('created_at_order'); //MEMO created_at_order取得
+        $route_order = \Input::get('route_order'); //MEMO route_order取得
+        $station_order = \Input::get('station_order'); //MEMO station_order取得
+        $routes_search = \Input::get('routes_search');
+        $stations_search = \Input::get('stations_search');
+        $facility_search = \Input::get('facility_search');
+        $repairer_search = \Input::get('repairer_search');
+        $status_search = \Input::get('status_search');
+        $start_date = \Input::get('start_date');
+        $end_date = \Input::get('end_date');
+        $architecture_ward_search = \Input::get('architecture_ward_search');
+        $order_base = array (); //MEMO 配列作成
+        $search_material = array ();
+
+
+        //MEMO 以下昇順降順処理
+        if ($route == 'true') {
+          if ($route_order == 'desc') {
+            $order_base[] = ' r.id desc ';
+          } else {
+            $order_base[] = ' r.id asc ';
+          }
+        }
+
+        if ($station == 'true') {
+          if ($station_order == 'desc') {
+            $order_base[] = ' s.display_id desc ';
+          } else {
+            $order_base[] = ' s.display_id asc ';
+          }
+        }
+
+        if ($status == 'true') {
+          if ($status_order == 'desc') {
+            $order_base[] = ' p.status desc ';
+          } else {
+            $order_base[] = ' p.status asc ';
+          }
+        }
+
+        if ($created_at_order == 'asc') {
+          $order_base[] = ' p.created_at asc ';
+        } else {
+          $order_base[] = ' p.created_at desc ';
+        }
+
+        if ($routes_search == "") {
+          $search_material['routes_search'] = "";
+        } else {
+          $search_material['routes_search'] = $routes_search;
+        }
+
+        if ($stations_search == "") {
+          $search_material['stations_search'] = "";
+        } else {
+          $search_material['stations_search'] = $stations_search;
+        }
+
+        if ($facility_search == "") {
+          $search_material['facility_search'] = "";
+        } else {
+          $search_material['facility_search'] = $facility_search;
+        }
+
+        if ($repairer_search == "") {
+          $search_material['repairer_search'] = "";
+        } else {
+          $search_material['repairer_search'] = $repairer_search;
+        }
+
+        if ($status_search == "") {
+          $search_material['status_search'] = "";
+        } else {
+          $search_material['status_search'] = $status_search;
+        }
+
+        if ($start_date == "") {
+          $search_material['start_date'] = "";
+        } else {
+          $search_material['start_date'] = $start_date;
+        }
+
+        if ($end_date == "") {
+          $search_material['end_date'] = "";
+        } else {
+          $search_material['end_date'] = $end_date;
+        }
+
+        if ($architecture_ward_search == "") {
+          $search_material['architecture_ward_search'] = "";
+        } else {
+          $search_material['architecture_ward_search'] = $architecture_ward_search;
+        }
+
+        $order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ
+        \Model_Post::csv_export($order, $search_material);
+        $this->success();
+    }catch (\Exception $e){
+        $this->failed();
+        $this->error=[
+            E::SERVER_ERROR,
+            '投稿一覧CSVの出力に失敗しました'
+        ];
+    }
+    $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
   }
 
   public function get_contribution_history()
