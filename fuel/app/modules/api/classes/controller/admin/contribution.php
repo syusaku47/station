@@ -845,6 +845,9 @@ class Controller_Admin_Contribution extends Controller_Base
 			$user->to_array();
 			if ($architecture_ward_search == "") {
 				$search_material['architecture_ward_search'] = "";
+				// パラメータをセットしなかった場合usersテーブルの建築区情報にnullを保存
+				$query = \DB::update('users');
+				$query->value('selected_architecture_ward', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['architecture_ward_search'] = $architecture_ward_search;
 				// usersテーブルにユーザ毎に選択した建築区情報を保持
