@@ -587,8 +587,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $posts = $list;
 
         //CSV形式で情報をファイルに出力のための準備
-        // $csvFileName = '/tmp/' . time() . rand() . '.csv';
-        $csvFileName = 'PostList.csv';
+        $csvFileName = '/tmp/' . time() . rand() . '.csv';
         $res = fopen($csvFileName, 'w');
         fwrite($res, "\xEF\xBB\xBF");
 
