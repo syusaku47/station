@@ -650,7 +650,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
 
         header('Content-Type: text/csv');
         // ここで渡されるファイルがダウンロード時のファイル名になる
-        header('Content-Disposition: attachment; filename=ExportCsv.csv');
+        header('Content-Disposition: attachment; filename=PostList.csv');
         //echo 'test';//lettersリストの出力処理
         readfile($csvFileName);
         exit;
