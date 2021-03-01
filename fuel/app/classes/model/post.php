@@ -587,7 +587,8 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
         $posts = $list;
 
         //CSV形式で情報をファイルに出力のための準備
-        $csvFileName = '/tmp/' . time() . rand() . '.csv';
+        // $csvFileName = '/tmp/' . time() . rand() . '.csv';
+        $csvFileName = 'PostList.csv';
         $res = fopen($csvFileName, 'w');
         fwrite($res, "\xEF\xBB\xBF");
 
@@ -650,7 +651,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
 
         header('Content-Type: text/csv');
         // ここで渡されるファイルがダウンロード時のファイル名になる
-        header('Content-Disposition: attachment; filename=ExportCsv.csv');
+        header('Content-Disposition: attachment; filename=PostList.csv');
         //echo 'test';//lettersリストの出力処理
         readfile($csvFileName);
         exit;
