@@ -613,12 +613,12 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $dataSite = $tmp['site_name'];
             $dataFacility = $tmp['facility_name'];
             $dataOverview = $tmp['overview'];
-            $tmp['thumbnail_before1'] = $tmp['thumbnail_before1'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before1'] . PHP_EOL : '';
-            $tmp['thumbnail_before2'] = $tmp['thumbnail_before2'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before2'] . PHP_EOL : '';
-            $tmp['thumbnail_before3'] = $tmp['thumbnail_before3'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before3'] . PHP_EOL : '';
-            $tmp['thumbnail_after1'] = $tmp['thumbnail_after1'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after1'] . PHP_EOL : '';
-            $tmp['thumbnail_after2'] = $tmp['thumbnail_after2'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after2'] . PHP_EOL : '';
-            $tmp['thumbnail_after3'] = $tmp['thumbnail_after3'] ? (empty(\Input::server('HTTPS')) ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after3'] : '';
+            $tmp['thumbnail_before1'] = $tmp['thumbnail_before1'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before1'] . PHP_EOL : '';
+            $tmp['thumbnail_before2'] = $tmp['thumbnail_before2'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before2'] . PHP_EOL : '';
+            $tmp['thumbnail_before3'] = $tmp['thumbnail_before3'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before3'] . PHP_EOL : '';
+            $tmp['thumbnail_after1'] = $tmp['thumbnail_after1'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after1'] . PHP_EOL : '';
+            $tmp['thumbnail_after2'] = $tmp['thumbnail_after2'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after2'] . PHP_EOL : '';
+            $tmp['thumbnail_after3'] = $tmp['thumbnail_after3'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after3'] : '';
             $dataThumbnail = $tmp['thumbnail_before1'] . $tmp['thumbnail_before2'] . $tmp['thumbnail_before3'] . $tmp['thumbnail_after1'] . $tmp['thumbnail_after2'] . $tmp['thumbnail_after3'];
             $dataRemarks = $tmp['remarks'];
             $dataCompletionReason = $tmp['complete_comment'];
