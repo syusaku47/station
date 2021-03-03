@@ -189,8 +189,12 @@ class Controller_Admin_Contribution extends Controller_Base
 
 
 			if (!empty($_FILES)) {
+				\Log::debug(DOCROOT); // var/www/app/publicが出力される
+				\Log::debug('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+				\Log::debug(\Uri::base(false)); // http://app.localhost/が出力される
 				$config = array (
-					'path' => DOCROOT . 'contents/', //保存先のパス
+					// DOCROOTから\Uri::base(false)に変更
+					'path' => \Uri::base(false) . 'contents/', //保存先のパス
 					'randomize' => true, //ファイル名をランダム生成
 					//'new_name' => $data['file_name'],
 					'auto_rename' => true,
