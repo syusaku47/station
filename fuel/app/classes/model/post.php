@@ -595,7 +595,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             throw new Exception('ファイルの書き込みに失敗しました。');
         }
 
-        $header_list = [["ID","ステータス","担当","投稿日","投稿者","路線","駅","場所","設備","事象","写真","備考","リジェクト理由"]];
+        $header_list = [["ID","ステータス","担当","投稿日","投稿者","路線","駅","場所","設備","事象","写真","備考","リジェクト/完了理由"]];
 
         foreach ($header_list as $headerinfo){
             fputcsv($res,$headerinfo);
