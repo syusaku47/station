@@ -66,6 +66,33 @@ class Controller_Contribution extends Controller_Base
     }
   }
 
+  // 2021/03/05 片渕 投稿一覧用の駅一覧取得
+  public function get_postslist_station_list()
+  {
+    try {
+      $stations = \Model_Station::query()->select('id', 'name','order_id')->get();
+      $array_tmp = $array_result = [];
+      // 駅名の重複を除く
+      foreach ($stations as $station)
+      {
+        if (!in_array($station['name'], $array_tmp))
+        {
+          $array_tmp[] = $station['name'];
+          $array_result[] = $station;
+        }
+      }
+      $this->data = $array_result;
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '駅情報の取得に失敗しました'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    }
+  }
+
   // 2021/02/19 片渕 情報担当一覧取得API実装
   public function get_repairers_list()
   {
