@@ -184,7 +184,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $where_facility .= ") and";
         }
 
-        // 駅名で絞り込み
+        // 駅IDで絞り込み
         $where_stations = '';
         if (is_array($stations_search) && $stations_search[0] !== '')
         {
@@ -195,6 +195,44 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
                 $where_stations .= count($stations_search) - 1 !== $i ? ',' : '';
             }
             $where_stations .= ") and";
+        }
+
+        // 駅名で絞り込み
+        $where_station_names = '';
+        if (is_array($stations_search) && $stations_search[0] !== '')
+        {
+            $where_station_names = "s.name in (";
+            foreach ($stations_search as $i => $val)
+            {
+                $station_name = '';
+                switch ($val)
+                {
+                    case 65: $station_name = '山科駅'; break;
+                    case 74: $station_name = '近江塩津駅'; break;
+                    case 106: $station_name = '京都駅'; break;
+                    case 135: $station_name = '奈良駅'; break;
+                    case 159: $station_name = '日根野駅'; break;
+                    case 160: $station_name = '天王寺駅'; break;
+                    case 163: $station_name = '西九条駅'; break;
+                    case 164: $station_name = '大阪駅'; break;
+                    case 165: $station_name = '尼崎駅'; break;
+                    case 187: $station_name = '京橋駅'; break;
+                    case 193: $station_name = '新今宮駅'; break;
+                    case 195: $station_name = '木津駅'; break;
+                    case 204: $station_name = '久宝寺駅'; break;
+                    case 208: $station_name = '今宮駅'; break;
+                    case 211: $station_name = '平城山駅'; break;
+                    case 228: $station_name = '放出駅'; break;
+                    case 229: $station_name = '鴫野駅'; break;
+                    case 237: $station_name = '塚本駅'; break;
+                    case 239: $station_name = '新大阪駅'; break;
+                    case 252: $station_name = '敦賀駅'; break;
+                    case 253: $station_name = '新疋田'; break;
+                }
+                $where_station_names .= "'" . $station_name . "'";
+                $where_station_names .= count($stations_search) - 1 !== $i ? ',' : '';
+            }
+            $where_station_names .= ") and";
         }
 
         // ステータスで絞り込み
@@ -302,6 +340,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             ' . $where_repairer . '
             ' . $where_routes . '
             ' . $where_stations . '
+            ' . $where_station_names . '
             ' . $where_facility . '
             ' . $where_status . '
             ' . $where_day . '
@@ -440,7 +479,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $where_facility .= ") and";
         }
 
-        // 駅名で絞り込み
+        // 駅IDで絞り込み
         $where_stations = '';
         if (is_array($stations_search) && $stations_search[0] !== '')
         {
@@ -451,6 +490,44 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
                 $where_stations .= count($stations_search) - 1 !== $i ? ',' : '';
             }
             $where_stations .= ") and";
+        }
+
+        // 駅名で絞り込み
+        $where_station_names = '';
+        if (is_array($stations_search) && $stations_search[0] !== '')
+        {
+            $where_station_names = "s.name in (";
+            foreach ($stations_search as $i => $val)
+            {
+                $station_name = '';
+                switch ($val)
+                {
+                    case 65: $station_name = '山科駅'; break;
+                    case 74: $station_name = '近江塩津駅'; break;
+                    case 106: $station_name = '京都駅'; break;
+                    case 135: $station_name = '奈良駅'; break;
+                    case 159: $station_name = '日根野駅'; break;
+                    case 160: $station_name = '天王寺駅'; break;
+                    case 163: $station_name = '西九条駅'; break;
+                    case 164: $station_name = '大阪駅'; break;
+                    case 165: $station_name = '尼崎駅'; break;
+                    case 187: $station_name = '京橋駅'; break;
+                    case 193: $station_name = '新今宮駅'; break;
+                    case 195: $station_name = '木津駅'; break;
+                    case 204: $station_name = '久宝寺駅'; break;
+                    case 208: $station_name = '今宮駅'; break;
+                    case 211: $station_name = '平城山駅'; break;
+                    case 228: $station_name = '放出駅'; break;
+                    case 229: $station_name = '鴫野駅'; break;
+                    case 237: $station_name = '塚本駅'; break;
+                    case 239: $station_name = '新大阪駅'; break;
+                    case 252: $station_name = '敦賀駅'; break;
+                    case 253: $station_name = '新疋田'; break;
+                }
+                $where_station_names .= "'" . $station_name . "'";
+                $where_station_names .= count($stations_search) - 1 !== $i ? ',' : '';
+            }
+            $where_station_names .= ") and";
         }
 
         // ステータスで絞り込み
@@ -556,6 +633,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             ' . $where_repairer . '
             ' . $where_routes . '
             ' . $where_stations . '
+            ' . $where_station_names . '
             ' . $where_facility . '
             ' . $where_status . '
             ' . $where_day . '
@@ -595,7 +673,7 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             throw new Exception('ファイルの書き込みに失敗しました。');
         }
 
-        $header_list = [["ID","ステータス","担当","投稿日","投稿者","路線","駅","場所","設備","事象","写真","備考","リジェクト理由"]];
+        $header_list = [["ID","ステータス","担当","投稿日","投稿者","路線","駅","場所","設備","事象","写真","備考","リジェクト/完了理由"]];
 
         foreach ($header_list as $headerinfo){
             fputcsv($res,$headerinfo);
@@ -613,11 +691,12 @@ from posts p inner join routes r on p.route_id = r.id  inner join  stations s on
             $dataSite = $tmp['site_name'];
             $dataFacility = $tmp['facility_name'];
             $dataOverview = $tmp['overview'];
-            $tmp['thumbnail_before1'] .= $tmp['thumbnail_before1'] ? PHP_EOL : '';
-            $tmp['thumbnail_before2'] .= $tmp['thumbnail_before2'] ? PHP_EOL : '';
-            $tmp['thumbnail_before3'] .= $tmp['thumbnail_before3'] ? PHP_EOL : '';
-            $tmp['thumbnail_after1'] .= $tmp['thumbnail_after1'] ? PHP_EOL : '';
-            $tmp['thumbnail_after2'] .= $tmp['thumbnail_after2'] ? PHP_EOL : '';
+            $tmp['thumbnail_before1'] = $tmp['thumbnail_before1'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before1'] . PHP_EOL : '';
+            $tmp['thumbnail_before2'] = $tmp['thumbnail_before2'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before2'] . PHP_EOL : '';
+            $tmp['thumbnail_before3'] = $tmp['thumbnail_before3'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_before3'] . PHP_EOL : '';
+            $tmp['thumbnail_after1'] = $tmp['thumbnail_after1'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after1'] . PHP_EOL : '';
+            $tmp['thumbnail_after2'] = $tmp['thumbnail_after2'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after2'] . PHP_EOL : '';
+            $tmp['thumbnail_after3'] = $tmp['thumbnail_after3'] ? (\Input::protocol() === 'http' ? 'http://' : 'https://') . \Input::server('HTTP_HOST') . $tmp['thumbnail_after3'] : '';
             $dataThumbnail = $tmp['thumbnail_before1'] . $tmp['thumbnail_before2'] . $tmp['thumbnail_before3'] . $tmp['thumbnail_after1'] . $tmp['thumbnail_after2'] . $tmp['thumbnail_after3'];
             $dataRemarks = $tmp['remarks'];
             $dataCompletionReason = $tmp['complete_comment'];
