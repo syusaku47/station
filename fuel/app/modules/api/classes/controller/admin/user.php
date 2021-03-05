@@ -330,7 +330,16 @@ class Controller_Admin_User extends Controller_Base
             $info['previous_login'] = $user['previous_login'] == '0' ? $user['previous_login'] : date("Y-m-d H:i:s", $user['previous_login']);
             $info['created_at'] = date("Y-m-d H:i:s", $user['created_at']);
             $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s", $user['updated_at']);
-            $query = \DB::select('selected_architecture_ward')->from('users')->where('id', $user['id'])->execute()->as_array();
+            $query =
+            \DB::select('selected_start_date', 'selected_end_date', 'selected_route', 'selected_station', 'selected_facility', 'selected_repairer', 'selected_status', 'selected_architecture_ward')
+            ->from('users')->where('id', $user['id'])->execute()->as_array();
+            $info['selected_start_date'] = $query[0]['selected_start_date'] ? $query[0]['selected_start_date'] : null;
+            $info['selected_end_date'] = $query[0]['selected_end_date'] ? $query[0]['selected_end_date'] : null;
+            $info['selected_route'] = $query[0]['selected_route'] ? unserialize($query[0]['selected_route']) : null;
+            $info['selected_station'] = $query[0]['selected_station'] ? unserialize($query[0]['selected_station']) : null;
+            $info['selected_facility'] = $query[0]['selected_facility'] ? unserialize($query[0]['selected_facility']) : null;
+            $info['selected_repairer'] = $query[0]['selected_repairer'] ? unserialize($query[0]['selected_repairer']) : null;
+            $info['selected_status'] = $query[0]['selected_status'] ? unserialize($query[0]['selected_status']) : null;
             $info['selected_architecture_ward'] = $query[0]['selected_architecture_ward'] ? unserialize($query[0]['selected_architecture_ward']) : null;
 
             $this->success();

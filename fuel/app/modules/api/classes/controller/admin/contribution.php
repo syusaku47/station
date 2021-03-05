@@ -767,6 +767,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$architecture_ward_search = \Input::get('architecture_ward_search');
 			$order_base = array (); //MEMO 配列作成
 			$search_material = array ();
+			$user->to_array();
 
 
 			//MEMO 以下昇順降順処理
@@ -802,47 +803,74 @@ class Controller_Admin_Contribution extends Controller_Base
 
 			if ($routes_search == "") {
 				$search_material['routes_search'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_route', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['routes_search'] = $routes_search;
+				$query = \DB::update('users');
+				$query->value('selected_route', serialize($routes_search))->where('id', $user['id'])->execute();
 			}
 
 			if ($stations_search == "") {
 				$search_material['stations_search'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_station', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['stations_search'] = $stations_search;
+				$query = \DB::update('users');
+				$query->value('selected_station', serialize($stations_search))->where('id', $user['id'])->execute();
 			}
 
 			if ($facility_search == "") {
 				$search_material['facility_search'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_facility', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['facility_search'] = $facility_search;
+				$query = \DB::update('users');
+				$query->value('selected_facility', serialize($facility_search))->where('id', $user['id'])->execute();
 			}
 
 			if ($repairer_search == "") {
 				$search_material['repairer_search'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_repairer', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['repairer_search'] = $repairer_search;
+				$query = \DB::update('users');
+				$query->value('selected_repairer', serialize($repairer_search))->where('id', $user['id'])->execute();
 			}
 
 			if ($status_search == "") {
 				$search_material['status_search'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_status', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['status_search'] = $status_search;
+				$query = \DB::update('users');
+				$query->value('selected_status', serialize($status_search))->where('id', $user['id'])->execute();
 			}
 
 			if ($start_date == "") {
 				$search_material['start_date'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_start_date', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['start_date'] = $start_date;
+				$query = \DB::update('users');
+				$query->value('selected_start_date', $start_date)->where('id', $user['id'])->execute();
 			}
 
 			if ($end_date == "") {
 				$search_material['end_date'] = "";
+				$query = \DB::update('users');
+				$query->value('selected_end_date', null)->where('id', $user['id'])->execute();
 			} else {
 				$search_material['end_date'] = $end_date;
+				$query = \DB::update('users');
+				$query->value('selected_end_date', $end_date)->where('id', $user['id'])->execute();
 			}
 
-			$user->to_array();
 			if ($architecture_ward_search == "") {
 				$search_material['architecture_ward_search'] = "";
 				// パラメータをセットしなかった場合usersテーブルの建築区情報にnullを保存
