@@ -12,13 +12,12 @@ class Controller_Admin_Contribution extends Controller_Base
 		'export_contribute'
 	];
 
-	public function get_site_list ()
+	public function get_site_list()
 	{
 		try {
 			$this->data = \Model_Site::query()->select('id', 'name')->where('disp_flag', true)->get();
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -28,14 +27,13 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_facility_list ()
+	public function get_facility_list()
 	{
 		try {
 			$site_id = \Input::get('site_id');
 			$this->data = \Model_Facility::query()->select('id', 'name')->where('site_id', $site_id)->where('disp_flag', true)->get();
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -45,13 +43,12 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_route_list ()
+	public function get_route_list()
 	{
 		try {
 			$this->data = \Model_Route::query()->select('id', 'name')->get();
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -61,14 +58,13 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_station_list ()
+	public function get_station_list()
 	{
 		try {
 			$route_id = \Input::get('route_id');
 			$this->data = \Model_Station::query()->select('id', 'name', 'order_id')->where('route_id', $route_id)->order_by('order_id', 'asc')->get();
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -78,7 +74,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_closest_station ()
+	public function get_closest_station()
 	{
 		try {
 
@@ -86,8 +82,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$long = \Input::get('long');
 			$this->data = \Model_Station::get_closest_station($lat, $long);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -98,7 +93,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	}
 
 	//Add 200113 冨岡 担当会社追加
-	public function post_contribute ()
+	public function post_contribute()
 	{
 		try {
 
@@ -120,10 +115,10 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 			$route_id = \Input::post('route_id'); //MEMO route_id 取得
-			$station_id = \Input::post('station_id');//MEMO station_id取得
+			$station_id = \Input::post('station_id'); //MEMO station_id取得
 			$site_id = \Input::post('site_id'); //MEMO site_id取得
-			$site_text = \Input::post('site_text');//MEMO site_text取得
-			$parent_id = \Input::post('parent_id');//MEMO parent_id取得
+			$site_text = \Input::post('site_text'); //MEMO site_text取得
+			$parent_id = \Input::post('parent_id'); //MEMO parent_id取得
 
 
 			if (mb_strlen($site_text) > 100) { //MEMO site_text 制限
@@ -189,13 +184,13 @@ class Controller_Admin_Contribution extends Controller_Base
 
 
 			if (!empty($_FILES)) {
-				$config = array (
+				$config = array(
 					'path' => DOCROOT . 'contents/', //保存先のパス
 					'randomize' => true, //ファイル名をランダム生成
 					//'new_name' => $data['file_name'],
 					'auto_rename' => true,
 					//'ext_whitelist' => array('jpg', 'jpeg', 'png'),
-					'max_size' => 0,//制限なし
+					'max_size' => 0, //制限なし
 					'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
 					//'auto_rename' => true, //ファイル名が重複した場合、連番を付与
 					'auto_process' => false
@@ -261,17 +256,15 @@ class Controller_Admin_Contribution extends Controller_Base
 			$email = $tmp['email'];
 			$info['url'] = $contribution_url;
 
-//            \Email::forge()
-//                ->from('info')
-//                ->to($email)
-//                ->subject('【みんなの駅】担当に設定されました')
-//                ->body(\View::forge('to_repairer', $info))
-//                ->send(false);
+			//            \Email::forge()
+			//                ->from('info')
+			//                ->to($email)
+			//                ->subject('【みんなの駅】担当に設定されました')
+			//                ->body(\View::forge('to_repairer', $info))
+			//                ->send(false);
 			unset($this->body['data']);
 			$this->success();
-
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -282,7 +275,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	}
 
 
-	public function post_new_information ()
+	public function post_new_information()
 	{
 		if (!$user = \Auth_User::get_user()) {
 			$this->failed();
@@ -294,7 +287,6 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 
 		if ($user->group_id != 2) {
-			$this->failed();
 			$this->error = [
 				E::INVALID_REQUEST,
 				'権限がありません'
@@ -309,23 +301,23 @@ class Controller_Admin_Contribution extends Controller_Base
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'タイトルを入力してください'
+				"タイトルを入力してください"
 			];
 			return;
 		}
-		if (mb_strlen($title) > 50) {
+		if (mb_strlen($title) > 5) {
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'タイトルは50字以内で入力してください'
+				"タイトルは5文字以内で入力してください"
 			];
 			return;
 		}
-		if (mb_strlen($body) > 500) {
+		if (mb_strlen($body) > 5) {
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'本文は500字以内で入力してください'
+				"本文は5文字以内で入力してください"
 			];
 			return;
 		}
@@ -337,11 +329,8 @@ class Controller_Admin_Contribution extends Controller_Base
 			$information->body = $body;
 			$information->is_private = 0;
 			$information->save();
-
-			unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -351,9 +340,79 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_information_list ()
+	// public function post_new_information()
+	// {
+	// 	if (!$user = \Auth_User::get_user()) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::UNAUTHNTICATED,
+	// 			'認証エラーです'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	if ($user->group_id != 2) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_REQUEST,
+	// 			'権限がありません'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	$title = \Input::post('title');
+	// 	$body = \Input::post('body');
+
+	// 	if (mb_strlen($title) == 0) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'タイトルを入力してください'
+	// 		];
+	// 		return;
+	// 	}
+	// 	if (mb_strlen($title) > 50) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'タイトルは50字以内で入力してください'
+	// 		];
+	// 		return;
+	// 	}
+	// 	if (mb_strlen($body) > 500) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'本文は500字以内で入力してください'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	try {
+	// 		$information = \Model_Information::forge();
+	// 		$information->title = $title . "test";
+	// 		$information->date = date("Y-m-d H:i:s");
+	// 		$information->body = $body . "test";
+	// 		$information->is_private = 0;
+	// 		$information->save();
+
+	// 		unset($this->body['data']);
+	// 		// $this->success();
+	// 	} catch (\Exception $e) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::SERVER_ERROR,
+	// 			'お知らせの作成に失敗しました'
+	// 		];
+	// 		$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+	// 	}
+	// }
+
+	public function get_information_filter()
 	{
+
 		try {
+			//verify : 確認
 			if (!$data = $this->verify([
 				'limit',
 				'p',
@@ -379,10 +438,11 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 
-			$this->list = \Model_Information::search($data);
+			$informations = \Model_Information::searchFilter();
+			$this->list = $informations;
+
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -392,7 +452,117 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function patch_edit_information ()
+
+
+
+	public function get_information_list()
+	{
+		try {
+			//verify : 確認
+			if (!$data = $this->verify([
+				'limit',
+				'p',
+			])) {
+				return;
+			}
+
+
+			if (!$user = \Auth_User::get_user()) {
+				$this->failed();
+				$this->error = [
+					E::UNAUTHNTICATED,
+					'認証エラーです'
+				];
+				return;
+			}
+
+			if ($user->group_id != 2) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'権限がありません'
+				];
+				return;
+			}
+
+			$this->list = \Model_Information::search($data);
+			$this->success();
+		} catch (\Exception $e) {
+			$this->failed();
+			$this->error = [
+				E::SERVER_ERROR,
+				'お知らせの取得に失敗しました'
+			];
+			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+		}
+	}
+
+
+	// public function patch_edit_information()
+	// {
+	// 	try {
+
+	// 		if (!$user = \Auth_User::get_user()) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::UNAUTHNTICATED,
+	// 				'認証エラーです'
+	// 			];
+	// 			return;
+	// 		}
+
+	// 		if ($user->group_id != 2) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_REQUEST,
+	// 				'権限がありません'
+	// 			];
+	// 			return;
+	// 		}
+	// 		$title = \Input::patch('title');
+	// 		$body = \Input::patch('body');
+	// 		$information = \Model_Information::find(\Input::patch('information_id'));
+	// 		if (mb_strlen($title) == 0) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'タイトルを入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		if (mb_strlen($title) > 50) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'タイトルは50字以内で入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		if (mb_strlen($body) > 500) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'本文は500字以内で入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		// \Log::debug("edit errors");
+	// 		$information->title = $title;
+	// 		$information->body = $body;
+	// 		$information->save();
+	// 		unset($this->body['data']);
+	// 		$this->success();
+	// 	} catch (\Exception $e) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::SERVER_ERROR,
+	// 			'お知らせの更新に失敗しました'
+	// 		];
+	// 		$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+	// 		\Log::debug($this->body['errorlog']);
+	// 	}
+	// }
+	public function patch_edit_information()
 	{
 		try {
 
@@ -413,7 +583,6 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-
 			$title = \Input::patch('title');
 			$body = \Input::patch('body');
 			$information = \Model_Information::find(\Input::patch('information_id'));
@@ -445,10 +614,9 @@ class Controller_Admin_Contribution extends Controller_Base
 			$information->title = $title;
 			$information->body = $body;
 			$information->save();
-			unset($this->body['data']);
+			// unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -458,7 +626,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function patch_delete_information ()
+	public function patch_delete_information()
 	{
 		try {
 
@@ -485,8 +653,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$information->save();
 			unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -496,7 +663,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function post_edit ()
+	public function post_edit()
 	{
 		if (!$user = \Auth_User::get_user()) {
 			$this->failed();
@@ -531,13 +698,13 @@ class Controller_Admin_Contribution extends Controller_Base
 			}
 
 			if (!empty($_FILES)) {
-				$config = array (
+				$config = array(
 					'path' => DOCROOT . 'contents/', //保存先のパス
 					'randomize' => true, //ファイル名をランダム生成
 					//'new_name' => $data['file_name'],
 					'auto_rename' => true,
 					//'ext_whitelist' => array('jpg', 'jpeg', 'png'),
-					'max_size' => 0,//制限なし
+					'max_size' => 0, //制限なし
 					'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
 					//'auto_rename' => true, //ファイル名が重複した場合、連番を付与
 					'auto_process' => false
@@ -626,8 +793,7 @@ class Controller_Admin_Contribution extends Controller_Base
 
 			unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -638,9 +804,10 @@ class Controller_Admin_Contribution extends Controller_Base
 	}
 
 	// 2020/2/9片渕 投稿削除機能実装
-	public function delete_remove ()
+	public function delete_remove()
 	{
 		try {
+			//ログイン情報確認
 			if (!$user = \Auth_User::get_user()) {
 				$this->failed();
 				$this->error = [
@@ -649,7 +816,8 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-	
+
+			//group_idが2でないなら権限がありません
 			if ($user->group_id != 2) {
 				$this->failed();
 				$this->error = [
@@ -659,6 +827,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 
+			// なんのID??
 			// 引数idを取得
 			$id = \Input::get('id');
 			if (is_null($id)) {
@@ -669,7 +838,6 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-
 			if (!is_numeric($id)) {
 				$this->failed();
 				$this->error = [
@@ -678,7 +846,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-
+			// 削除の投稿IDが無いと"指定した投稿データは存在しません"表示
 			if (!$delete = \Model_Post::find($id)) {
 				$this->failed();
 				$this->error = [
@@ -689,9 +857,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			}
 			$delete->delete();
 			$this->success();
-			
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -722,7 +888,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	 * @modifiwe 冨岡 2020/03/25 冨岡 路線、駅ソート処理変更
 	 * @modifire 片渕 2021/02/24 片渕 期日、路線、駅、設備、情報担当、ステータス、建築区絞り込み
 	 */
-	public function get_contribution_list ($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "", $architecture_ward_search = "")
+	public function get_contribution_list($status = false, $route = false, $station = false, $status_order = 'asc', $created_at_order = 'desc', $route_order = 'asc', $station_order = 'asc', $routes_search = "", $stations_search = "", $facility_search = "", $repairer_search = "", $status_search = "", $start_date = "", $end_date = "", $architecture_ward_search = "")
 	{
 		try {
 
@@ -751,8 +917,8 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 			$status = \Input::get('status'); //MEMO status 取得
-			$route = \Input::get('route');//MEMO route 取得
-			$station = \Input::get('station');//MEMO station 取得
+			$route = \Input::get('route'); //MEMO route 取得
+			$station = \Input::get('station'); //MEMO station 取得
 			$status_order = \Input::get('status_order'); //MEMO status_order取得
 			$created_at_order = \Input::get('created_at_order'); //MEMO created_at_order取得
 			$route_order = \Input::get('route_order'); //MEMO route_order取得
@@ -765,8 +931,8 @@ class Controller_Admin_Contribution extends Controller_Base
 			$start_date = \Input::get('start_date');
 			$end_date = \Input::get('end_date');
 			$architecture_ward_search = \Input::get('architecture_ward_search');
-			$order_base = array (); //MEMO 配列作成
-			$search_material = array ();
+			$order_base = array(); //MEMO 配列作成
+			$search_material = array();
 
 
 			//MEMO 以下昇順降順処理
@@ -859,9 +1025,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$contributes = \Model_Post::get_contribution_list($data, $order, $search_material);
 			$this->data = $contributes;
 			$this->success();
-
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -869,17 +1033,15 @@ class Controller_Admin_Contribution extends Controller_Base
 			];
 			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
 		}
-
 	}
 
-	public function get_comment_list ()
+	public function get_comment_list()
 	{
 		try {
 			$type = \Input::get('type');
 			$this->data = \Model_Comment::query()->where('type', $type)->get();
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -889,7 +1051,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function post_reject_contribution ()
+	public function post_reject_contribution()
 	{
 		if (!$user = \Auth_User::get_user()) {
 			$this->failed();
@@ -935,7 +1097,7 @@ class Controller_Admin_Contribution extends Controller_Base
 
 			$user = \Auth_User::find($contribute->contributor_id);
 			$email = $user->email;
-			$info = array ();
+			$info = array();
 			$info['url'] = $reject_url;
 
 			if (!empty($comment_id)) {
@@ -953,12 +1115,12 @@ class Controller_Admin_Contribution extends Controller_Base
 				$info['comment'] = $reject_text;
 			}
 
-//            \Email::forge()
-//                ->from('info')
-//                ->to($email)
-//                ->subject('【みんなの駅】投稿がリジェクトされました')
-//                ->body(\View::forge('reject', $info))
-//                ->send(false);
+			//            \Email::forge()
+			//                ->from('info')
+			//                ->to($email)
+			//                ->subject('【みんなの駅】投稿がリジェクトされました')
+			//                ->body(\View::forge('reject', $info))
+			//                ->send(false);
 
 			$contribute->status = 'リジェクト';
 			if (!empty($comment_id)) {
@@ -978,8 +1140,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$contribute->save();
 			unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -989,7 +1150,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function post_complete_contribution ()
+	public function post_complete_contribution()
 	{
 		if (!$user = \Auth_User::get_user()) {
 			$this->failed();
@@ -1037,7 +1198,7 @@ class Controller_Admin_Contribution extends Controller_Base
 
 			$user = \Auth_User::find($contribute->contributor_id);
 			$email = $user->email;
-			$info = array ();
+			$info = array();
 			$info['url'] = $complete_url;
 			if (!empty($comment_id)) {
 				$comment = \Model_Comment::find($comment_id);
@@ -1055,13 +1216,13 @@ class Controller_Admin_Contribution extends Controller_Base
 			}
 
 			if (!empty($_FILES)) {
-				$config = array (
+				$config = array(
 					'path' => DOCROOT . 'contents/', //保存先のパス
 					'randomize' => true, //ファイル名をランダム生成
 					//'new_name' => $data['file_name'],
 					'auto_rename' => true,
 					//'ext_whitelist' => array('jpg', 'jpeg', 'png'),
-					'max_size' => 0,//制限なし
+					'max_size' => 0, //制限なし
 					'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
 					//'auto_rename' => true, //ファイル名が重複した場合、連番を付与
 					'auto_process' => false
@@ -1113,12 +1274,12 @@ class Controller_Admin_Contribution extends Controller_Base
 				}
 			}
 
-//            \Email::forge()
-//                ->from('info')
-//                ->to($email)
-//                ->subject('【みんなの駅】修繕が完了しました')
-//                ->body(\View::forge('complete', $info))
-//                ->send(false);
+			//            \Email::forge()
+			//                ->from('info')
+			//                ->to($email)
+			//                ->subject('【みんなの駅】修繕が完了しました')
+			//                ->body(\View::forge('complete', $info))
+			//                ->send(false);
 
 			$contribute->status = '完了';
 			if (!empty($comment_id)) {
@@ -1138,8 +1299,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$contribute->save();
 			unset($this->body['data']);
 			$this->success();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -1149,7 +1309,7 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function post_export ()
+	public function post_export()
 	{
 		$start_date = \Input::post('start_date');
 		$end_date = \Input::post('end_date');
@@ -1246,18 +1406,18 @@ h;
 				// データ書き込み
 				foreach ($data_list as $data) {
 					mb_convert_variables('SJIS-win', 'UTF-8', $data);
-					mb_convert_encoding( "髙﨑纊①㈱㌔ｱｲｳｴｵあいうえおabc", "UTF-8", "SJIS-win");
+					mb_convert_encoding("髙﨑纊①㈱㌔ｱｲｳｴｵあいうえおabc", "UTF-8", "SJIS-win");
 					fputcsv($f, $data);
 				}
 			}
 			// ファイルを閉じる
 			fclose($f);
 
-			$filename = "posts_list" . $start_date.'-'.$end_date . ".csv";
+			$filename = "posts_list" . $start_date . '-' . $end_date . ".csv";
 			//ホワイトスペース相当の文字をアンダースコアに
 			$filename = preg_replace('/\\s/u', '_', $filename);
 			//ファイル名に使えない文字をアンダースコアに
-			$filename = str_replace(array ('\\', '/', ':', '*', '?', '"', '<', '>', '|'), '_', $filename);
+			$filename = str_replace(array('\\', '/', ':', '*', '?', '"', '<', '>', '|'), '_', $filename);
 			header('Content-Encoding: UTF-8');
 			header('Content-Type: text/csv');
 			header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -1265,8 +1425,7 @@ h;
 			readfile($csv_file_path);
 			unlink($csv_file_path);
 			exit();
-		}
-		catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->failed();
 			$this->error = [
 				E::SERVER_ERROR,
@@ -1275,5 +1434,4 @@ h;
 			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
 		}
 	}
-
 }

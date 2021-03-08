@@ -54,7 +54,7 @@ class Controller_Contribution extends Controller_Base
   {
     try {
       $route_id = \Input::get('route_id');
-      $this->data = \Model_Station::query()->select('id', 'name','order_id')->where('route_id', $route_id)->order_by('order_id', 'asc')->get();
+      $this->data = \Model_Station::query()->select('id', 'name', 'order_id', 'created_at')->where('route_id', $route_id)->order_by('order_id', 'asc')->get();
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
@@ -65,6 +65,21 @@ class Controller_Contribution extends Controller_Base
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
+  // public function get_station_list()
+  // {
+  //   try {
+  //     $route_id = \Input::get('route_id');
+  //     $this->data = \Model_Station::query()->select('id', 'name','order_id')->where('route_id', $route_id)->order_by('order_id', 'asc')->get();
+  //     $this->success();
+  //   } catch (\Exception $e) {
+  //     $this->failed();
+  //     $this->error = [
+  //       E::SERVER_ERROR,
+  //       '駅情報の取得に失敗しました'
+  //     ];
+  //     $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+  //   }
+  // }
 
   // 2021/02/19 片渕 情報担当一覧取得API実装
   public function get_repairers_list()
@@ -190,7 +205,7 @@ class Controller_Contribution extends Controller_Base
           //'new_name' => $data['file_name'],
           'auto_rename' => true,
           //'ext_whitelist' => array('jpg', 'jpeg', 'png'),
-          'max_size' => 0,//制限なし
+          'max_size' => 0, //制限なし
           'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
           //'auto_rename' => true, //ファイル名が重複した場合、連番を付与
           'auto_process' => false
@@ -245,21 +260,19 @@ class Controller_Contribution extends Controller_Base
 
       $post->save();
       $latest_post = \Model_Post::get_contribution_history($contributor_id)[0];
-      $contribution_url = \Input::post('contribution_url'). $latest_post['id'];
+      $contribution_url = \Input::post('contribution_url') . $latest_post['id'];
       $tmp = \Model_Repairer::query()->select('email')->where('id', '=', 1)->get_one()->to_array();
       $email = $tmp['email'];
       $info['url'] = $contribution_url;
 
-//      \Email::forge()
-//        ->from('info')
-//        ->to($email)
-//        ->subject('【みんなの駅】担当に設定されました')
-//        ->body(\View::forge('to_repairer', $info))
-//        ->send(false);
+      //      \Email::forge()
+      //        ->from('info')
+      //        ->to($email)
+      //        ->subject('【みんなの駅】担当に設定されました')
+      //        ->body(\View::forge('to_repairer', $info))
+      //        ->send(false);
       unset($this->body['data']);
       $this->success();
-
-
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
@@ -271,138 +284,137 @@ class Controller_Contribution extends Controller_Base
   }
 
 
-    public function post_questionnaire()
-    {
-        $question1_list = [
-            'TMNj5RPv',
-            '良い',
-            '普通',
-            '悪い'
+  public function post_questionnaire()
+  {
+    $question1_list = [
+      'TMNj5RPv',
+      '良い',
+      '普通',
+      '悪い'
+    ];
+
+    $question2_list = [
+      'TMNj5RPv',
+      '利用する',
+      '利用しない'
+    ];
+
+    $question3_list = [
+      'TMNj5RPv',
+      '項目が多い(入力が面倒)',
+      '文字の入力が使いにくい',
+      '写真の投稿が使いにくい',
+      '駅員に口答で伝えた方が早い'
+    ];
+
+    if (!$data = $this->verify([
+      'question1' => [
+        'label' => '設問1',
+        'validation' => [
+          'required'
+        ]
+      ],
+      'question2' => [
+        'label' => '設問2',
+        'validation' => [
+          'required'
+        ]
+      ],
+      'question3' => [
+        'label' => '設問3',
+        'default' => null
+      ],
+      'question4' => [
+        'label' => '設問4',
+        'default' => null
+      ]
+
+    ])) {
+      return;
+    }
+    try {
+      if (!$user = \Auth_User::get_user()) {
+        $this->failed();
+        $this->error = [
+          E::UNAUTHNTICATED,
+          '認証エラーです。'
         ];
+        return;
+      }
+      $user_id = $user->id;
+      $question1 = \Input::post('question1');
+      $question2 = \Input::post('question2');
+      $question3 = \Input::post('question3');
+      $question4 = \Input::post('question4');
 
-        $question2_list = [
-            'TMNj5RPv',
-            '利用する',
-            '利用しない'
+      if (array_search($question1, $question1_list) == false) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '「設問1」は選択肢から回答を選んで下さい'
         ];
-
-        $question3_list = [
-            'TMNj5RPv',
-            '項目が多い(入力が面倒)',
-            '文字の入力が使いにくい',
-            '写真の投稿が使いにくい',
-            '駅員に口答で伝えた方が早い'
+        return;
+      }
+      if (array_search($question2, $question2_list) == false) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          '「設問2」は選択肢から回答を選んで下さい'
         ];
-
-        if(!$data = $this->verify([
-            'question1' => [
-                'label' => '設問1',
-                'validation' => [
-                    'required'
-                ]
-            ],
-            'question2' => [
-                'label' => '設問2',
-                'validation' => [
-                    'required'
-                ]
-            ],
-            'question3' => [
-                'label' => '設問3',
-                'default' => null
-            ],
-            'question4' => [
-                'label' => '設問4',
-                'default' => null
-            ]
-
-        ])){
-            return;
-        }
-        try {
-            if(!$user = \Auth_User::get_user()){
-                $this->failed();
-                $this->error = [
-                    E::UNAUTHNTICATED,
-                    '認証エラーです。'
-                ];
-                return;
-            }
-            $user_id = $user->id;
-            $question1 = \Input::post('question1');
-            $question2 = \Input::post('question2');
-            $question3 = \Input::post('question3');
-            $question4 = \Input::post('question4');
-
-            if(array_search($question1,$question1_list) == false){
-                $this->failed();
-                $this->error = [
-                    E::INVALID_PARAM,
-                    '「設問1」は選択肢から回答を選んで下さい'
-                ];
-                return;
-            }
-            if(array_search($question2,$question2_list) == false){
-                $this->failed();
-                $this->error = [
-                    E::INVALID_PARAM,
-                    '「設問2」は選択肢から回答を選んで下さい'
-                ];
-                return;
-            }
-            if (!is_null($question3)) {
-                if (!empty($question3)) {
-                    if (array_search($question3, $question3_list) == false) {
-                        $this->failed();
-                        $this->error = [
-                            E::INVALID_PARAM,
-                            '「設問3」は選択肢から回答を選んで下さい'
-                        ];
-                        return;
-                    }
-                }
-            }
-            if (mb_strlen($question4) > 100) {
-                $this->failed();
-                $this->error = [
-                    E::INVALID_PARAM,
-                    'ご意見は100字以内で入力してください'
-                ];
-                return;
-            }
-
-            $questionnaire = \Model_Questionnaire::forge();
-            $questionnaire->user_id = $user_id;
-            $questionnaire->question1= $question1;
-            $questionnaire->question2= $question2;
-            $questionnaire->question3= $question3;
-            $questionnaire->question4= $question4;
-
-        }catch (\Exception $e){
+        return;
+      }
+      if (!is_null($question3)) {
+        if (!empty($question3)) {
+          if (array_search($question3, $question3_list) == false) {
             $this->failed();
             $this->error = [
-                E::SERVER_ERROR,
-                'アンケートの送信に失敗しました。'
+              E::INVALID_PARAM,
+              '「設問3」は選択肢から回答を選んで下さい'
             ];
-            $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+            return;
+          }
         }
-        $questionnaire->save();
-        $this->success();
+      }
+      if (mb_strlen($question4) > 100) {
+        $this->failed();
+        $this->error = [
+          E::INVALID_PARAM,
+          'ご意見は100字以内で入力してください'
+        ];
+        return;
+      }
+
+      $questionnaire = \Model_Questionnaire::forge();
+      $questionnaire->user_id = $user_id;
+      $questionnaire->question1 = $question1;
+      $questionnaire->question2 = $question2;
+      $questionnaire->question3 = $question3;
+      $questionnaire->question4 = $question4;
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'アンケートの送信に失敗しました。'
+      ];
+      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
+    $questionnaire->save();
+    $this->success();
+  }
 
   public function get_questionnaires_csv()
   {
-      try {
-          \Model_Questionnaire::csv_export();
-          $this->success();
-      }catch (\Exception $e){
-          $this->failed();
-          $this->error=[
-              E::SERVER_ERROR,
-              'アンケートCSVの出力に失敗しました'
-          ];
-      }
-      $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+    try {
+      \Model_Questionnaire::csv_export();
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        'アンケートCSVの出力に失敗しました'
+      ];
+    }
+    $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
   }
 
   // 2021/02/22 片渕 投稿一覧CSV出力実装
@@ -422,116 +434,115 @@ class Controller_Contribution extends Controller_Base
     $start_date = "",
     $end_date = "",
     $architecture_ward_search = ""
-  )
-  {
+  ) {
     try {
-        $status = \Input::get('status'); //MEMO status 取得
-        $route = \Input::get('route');//MEMO route 取得
-        $station = \Input::get('station');//MEMO station 取得
-        $status_order = \Input::get('status_order'); //MEMO status_order取得
-        $created_at_order = \Input::get('created_at_order'); //MEMO created_at_order取得
-        $route_order = \Input::get('route_order'); //MEMO route_order取得
-        $station_order = \Input::get('station_order'); //MEMO station_order取得
-        $routes_search = \Input::get('routes_search');
-        $stations_search = \Input::get('stations_search');
-        $facility_search = \Input::get('facility_search');
-        $repairer_search = \Input::get('repairer_search');
-        $status_search = \Input::get('status_search');
-        $start_date = \Input::get('start_date');
-        $end_date = \Input::get('end_date');
-        $architecture_ward_search = \Input::get('architecture_ward_search');
-        $order_base = array (); //MEMO 配列作成
-        $search_material = array ();
+      $status = \Input::get('status'); //MEMO status 取得
+      $route = \Input::get('route'); //MEMO route 取得
+      $station = \Input::get('station'); //MEMO station 取得
+      $status_order = \Input::get('status_order'); //MEMO status_order取得
+      $created_at_order = \Input::get('created_at_order'); //MEMO created_at_order取得
+      $route_order = \Input::get('route_order'); //MEMO route_order取得
+      $station_order = \Input::get('station_order'); //MEMO station_order取得
+      $routes_search = \Input::get('routes_search');
+      $stations_search = \Input::get('stations_search');
+      $facility_search = \Input::get('facility_search');
+      $repairer_search = \Input::get('repairer_search');
+      $status_search = \Input::get('status_search');
+      $start_date = \Input::get('start_date');
+      $end_date = \Input::get('end_date');
+      $architecture_ward_search = \Input::get('architecture_ward_search');
+      $order_base = array(); //MEMO 配列作成
+      $search_material = array();
 
 
-        //MEMO 以下昇順降順処理
-        if ($route == 'true') {
-          if ($route_order == 'desc') {
-            $order_base[] = ' r.id desc ';
-          } else {
-            $order_base[] = ' r.id asc ';
-          }
-        }
-
-        if ($station == 'true') {
-          if ($station_order == 'desc') {
-            $order_base[] = ' s.display_id desc ';
-          } else {
-            $order_base[] = ' s.display_id asc ';
-          }
-        }
-
-        if ($status == 'true') {
-          if ($status_order == 'desc') {
-            $order_base[] = ' p.status desc ';
-          } else {
-            $order_base[] = ' p.status asc ';
-          }
-        }
-
-        if ($created_at_order == 'asc') {
-          $order_base[] = ' p.created_at asc ';
+      //MEMO 以下昇順降順処理
+      if ($route == 'true') {
+        if ($route_order == 'desc') {
+          $order_base[] = ' r.id desc ';
         } else {
-          $order_base[] = ' p.created_at desc ';
+          $order_base[] = ' r.id asc ';
         }
+      }
 
-        if ($routes_search == "") {
-          $search_material['routes_search'] = "";
+      if ($station == 'true') {
+        if ($station_order == 'desc') {
+          $order_base[] = ' s.display_id desc ';
         } else {
-          $search_material['routes_search'] = $routes_search;
+          $order_base[] = ' s.display_id asc ';
         }
+      }
 
-        if ($stations_search == "") {
-          $search_material['stations_search'] = "";
+      if ($status == 'true') {
+        if ($status_order == 'desc') {
+          $order_base[] = ' p.status desc ';
         } else {
-          $search_material['stations_search'] = $stations_search;
+          $order_base[] = ' p.status asc ';
         }
+      }
 
-        if ($facility_search == "") {
-          $search_material['facility_search'] = "";
-        } else {
-          $search_material['facility_search'] = $facility_search;
-        }
+      if ($created_at_order == 'asc') {
+        $order_base[] = ' p.created_at asc ';
+      } else {
+        $order_base[] = ' p.created_at desc ';
+      }
 
-        if ($repairer_search == "") {
-          $search_material['repairer_search'] = "";
-        } else {
-          $search_material['repairer_search'] = $repairer_search;
-        }
+      if ($routes_search == "") {
+        $search_material['routes_search'] = "";
+      } else {
+        $search_material['routes_search'] = $routes_search;
+      }
 
-        if ($status_search == "") {
-          $search_material['status_search'] = "";
-        } else {
-          $search_material['status_search'] = $status_search;
-        }
+      if ($stations_search == "") {
+        $search_material['stations_search'] = "";
+      } else {
+        $search_material['stations_search'] = $stations_search;
+      }
 
-        if ($start_date == "") {
-          $search_material['start_date'] = "";
-        } else {
-          $search_material['start_date'] = $start_date;
-        }
+      if ($facility_search == "") {
+        $search_material['facility_search'] = "";
+      } else {
+        $search_material['facility_search'] = $facility_search;
+      }
 
-        if ($end_date == "") {
-          $search_material['end_date'] = "";
-        } else {
-          $search_material['end_date'] = $end_date;
-        }
+      if ($repairer_search == "") {
+        $search_material['repairer_search'] = "";
+      } else {
+        $search_material['repairer_search'] = $repairer_search;
+      }
 
-        if ($architecture_ward_search == "") {
-          $search_material['architecture_ward_search'] = "";
-        } else {
-          $search_material['architecture_ward_search'] = $architecture_ward_search;
-        }
+      if ($status_search == "") {
+        $search_material['status_search'] = "";
+      } else {
+        $search_material['status_search'] = $status_search;
+      }
 
-        $order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ
-        \Model_Post::csv_export($order, $search_material);
-        $this->success();
-    }catch (\Exception $e){
-        $this->failed();
-        $this->error=[
-            E::SERVER_ERROR,
-            '投稿一覧CSVの出力に失敗しました'
-        ];
+      if ($start_date == "") {
+        $search_material['start_date'] = "";
+      } else {
+        $search_material['start_date'] = $start_date;
+      }
+
+      if ($end_date == "") {
+        $search_material['end_date'] = "";
+      } else {
+        $search_material['end_date'] = $end_date;
+      }
+
+      if ($architecture_ward_search == "") {
+        $search_material['architecture_ward_search'] = "";
+      } else {
+        $search_material['architecture_ward_search'] = $architecture_ward_search;
+      }
+
+      $order = implode(' , ', $order_base); //MEMO 各項目の内昇順降順の適応は一つ
+      \Model_Post::csv_export($order, $search_material);
+      $this->success();
+    } catch (\Exception $e) {
+      $this->failed();
+      $this->error = [
+        E::SERVER_ERROR,
+        '投稿一覧CSVの出力に失敗しました'
+      ];
     }
     $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
   }
@@ -614,7 +625,6 @@ class Controller_Contribution extends Controller_Base
       $contributes = \Model_Post::get_other_contributes($status, $station_id, $contributor_id);
       $this->data = $contributes;
       $this->success();
-
     } catch (\Exception $e) {
       $this->failed();
       $this->error = [
@@ -623,7 +633,6 @@ class Controller_Contribution extends Controller_Base
       ];
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
-
   }
 
   public function get_information_list()
@@ -631,10 +640,11 @@ class Controller_Contribution extends Controller_Base
     try {
       $this->data = \Model_Information::find('all', array(
         'where' => array(
-          array('is_private', 0),
+          array('is_private', 1),
         ),
-        'order_by' => array('date' => 'desc'),
+        'order_by' => array('date' => 'asc'),
       ));
+
       $this->success();
     } catch (\Exception $e) {
       $this->failed();
@@ -645,8 +655,28 @@ class Controller_Contribution extends Controller_Base
       $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
     }
   }
+  // public function get_information_list()
+  // {
+  //   try {
+  //     $this->data = \Model_Information::find('all', array(
+  //       'where' => array(
+  //         array('is_private', 0),
+  //       ),
+  //       'order_by' => array('date' => 'desc'),
+  //     ));
+  //     $this->success();
+  //   } catch (\Exception $e) {
+  //     $this->failed();
+  //     $this->error = [
+  //       E::SERVER_ERROR,
+  //       'お知らせの取得に失敗しました'
+  //     ];
+  //     $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+  //   }
+  // }
 
-  public function post_edit_remarks(){
+  public function post_edit_remarks()
+  {
     $contribution_id = \Input::post('contribution_id');
     $remarks = \Input::post('remarks');
     if (mb_strlen($remarks) > 200) {
@@ -657,9 +687,9 @@ class Controller_Contribution extends Controller_Base
       ];
       return;
     }
-    try{
+    try {
       $contribute = \Model_Post::find($contribution_id);
-      if(!$contribute){
+      if (!$contribute) {
         $this->failed();
         $this->error = [
           E::INVALID_REQUEST,
@@ -675,7 +705,7 @@ class Controller_Contribution extends Controller_Base
           //'new_name' => $data['file_name'],
           'auto_rename' => true,
           //'ext_whitelist' => array('jpg', 'jpeg', 'png'),
-          'max_size' => 0,//制限なし
+          'max_size' => 0, //制限なし
           'suffix' => '_' . date("Ymd"), //ファイル名の最後に文字列を付与
           //'auto_rename' => true, //ファイル名が重複した場合、連番を付与
           'auto_process' => false
@@ -734,7 +764,7 @@ class Controller_Contribution extends Controller_Base
       $contribute->save();
       unset($this->body['data']);
       $this->success();
-    }catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->failed();
       $this->error = [
         E::SERVER_ERROR,

@@ -4,11 +4,11 @@ class Model_Base extends \Orm\Model_Soft
 {
 
 	protected static $_observers = [
-//		'Orm\Observer_Uuid' => [
-//			'events' => [
-//				'before_insert'
-//			]
-//		],
+		//		'Orm\Observer_Uuid' => [
+		//			'events' => [
+		//				'before_insert'
+		//			]
+		//		],
 		'Orm\Observer_CreatedAt' => [
 			'events' => [
 				'before_insert'
@@ -21,13 +21,13 @@ class Model_Base extends \Orm\Model_Soft
 			],
 			'mysql_timestamp' => true
 		],
-//		'Orm\\Observer_Self' => [
-//			'events' => [
-//				'after_save',
-//				'after_insert',
-//				'after_update'
-//			]
-//		]
+		//		'Orm\\Observer_Self' => [
+		//			'events' => [
+		//				'after_save',
+		//				'after_insert',
+		//				'after_update'
+		//			]
+		//		]
 	];
 
 	protected static $_soft_delete = [
@@ -95,7 +95,7 @@ class Model_Base extends \Orm\Model_Soft
 	public function patch($data)
 	{
 		foreach ($data as $key => $value) {
-			if (! in_array($key, [
+			if (!in_array($key, [
 				'id',
 				'created_at',
 				'updated_at',

@@ -1,4 +1,5 @@
 <?php
+
 namespace Api;
 
 class Controller_Base extends \Controller_Rest
@@ -51,7 +52,7 @@ class Controller_Base extends \Controller_Rest
 				break;
 
 			case 'error':
-				list ($code, $message) = is_array($value) ? $value : [
+				list($code, $message) = is_array($value) ? $value : [
 					$value,
 					''
 				];
@@ -79,23 +80,23 @@ class Controller_Base extends \Controller_Rest
 
 	protected function verify_csrf()
 	{
-		if (! \Security::check_token()) {
+		if (!\Security::check_token()) {
 			$this->error = E::INVALID_CSRF_TOKEN;
 			return false;
 		}
 		return true;
 	}
 
-  protected function success()
-  {
-    $this->body['status'] = 'success';
-  }
+	protected function success()
+	{
+		$this->body['status'] = 'success';
+	}
 
-  protected function failed()
-  {
-    unset($this->body['data']);
-    $this->body['status'] = 'failed';
-  }
+	protected function failed()
+	{
+		unset($this->body['data']);
+		$this->body['status'] = 'failed';
+	}
 
 	protected function verify($fields = [], $search = false, $param = [])
 	{
@@ -151,7 +152,7 @@ class Controller_Base extends \Controller_Rest
 		}
 
 		$param = array_merge(\Input::all(), $param);
-		if (! $val->run($param)) {
+		if (!$val->run($param)) {
 			$messages = [];
 			foreach ($val->error() as $k => $m) {
 				$messages[$k] = (string) $m;
@@ -168,7 +169,7 @@ class Controller_Base extends \Controller_Rest
 
 	protected function has_error()
 	{
-		return ! empty($this->err);
+		return !empty($this->err);
 	}
 }
 
