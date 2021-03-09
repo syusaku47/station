@@ -1,5 +1,5 @@
 # Multiple Environment config, set this to development, staging or production
- SetEnv FUEL_ENV production
+# SetEnv FUEL_ENV production
 
 Header set Access-Control-Allow-Origin "http://tomato.local:3000"
 Header set Access-Control-Allow-Credentials true
