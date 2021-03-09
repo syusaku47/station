@@ -1,6 +1,7 @@
 <?php
 
 namespace Api;
+
 /**
  * Class Controller_User
  * @package Api
@@ -47,15 +48,15 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-//            if ($pwlength < 8 || $pwlength > 16) {
-//                $this->failed();
-//                $this->error = [
-//                    E::INVALID_PARAM,
-//                    'パスワードは8文字以上16文字以内で入力してください'
-//                ];
-//                return;
-//            }
-            if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i',$password)) {
+            //            if ($pwlength < 8 || $pwlength > 16) {
+            //                $this->failed();
+            //                $this->error = [
+            //                    E::INVALID_PARAM,
+            //                    'パスワードは8文字以上16文字以内で入力してください'
+            //                ];
+            //                return;
+            //            }
+            if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i', $password)) {
                 // 英数字ではない場合
                 $this->failed();
                 $this->error = [
@@ -115,13 +116,13 @@ class Controller_Admin_User extends Controller_Base
     {
         try {
             if (!$data = $this->verify([
-//        'email' => [
-//          'label' => 'メールアドレス',
-//          'validation' => [
-//            'required',
-//            'valid_email'
-//          ]
-//        ],
+                //        'email' => [
+                //          'label' => 'メールアドレス',
+                //          'validation' => [
+                //            'required',
+                //            'valid_email'
+                //          ]
+                //        ],
                 'username' => [
                     'label' => 'ニックネーム',
                     'validation' => [
@@ -146,14 +147,14 @@ class Controller_Admin_User extends Controller_Base
 
                 return;
             }
-//        if (!$user = \Auth_User::by_email($data['email'])) {
-//            $this->failed();
-//            $this->error = [
-//                E::UNAUTHNTICATED,
-//                'メールアドレスまたはパスワードが違います'
-//            ];
-//            return;
-//        }
+            //        if (!$user = \Auth_User::by_email($data['email'])) {
+            //            $this->failed();
+            //            $this->error = [
+            //                E::UNAUTHNTICATED,
+            //                'メールアドレスまたはパスワードが違います'
+            //            ];
+            //            return;
+            //        }
             if (!$user = \Auth_User::by_username($data['username'])) {
                 $this->failed();
                 $this->error = [
@@ -163,7 +164,7 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-            if($user->group_id != 2){
+            if ($user->group_id != 2) {
                 $this->failed();
                 $this->error = [
                     E::UNAUTHNTICATED,
@@ -172,16 +173,16 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-//      if (\Auth::login($data['email'], \Input::post('password'))) {
-//        unset($this->body['data']);
-//        $this->success();
-//        return;
-//      }
-//      $this->failed();
-//      $this->error = [
-//        E::UNAUTHNTICATED,
-//        'メールアドレスまたはパスワードが違います'
-//      ];
+            //      if (\Auth::login($data['email'], \Input::post('password'))) {
+            //        unset($this->body['data']);
+            //        $this->success();
+            //        return;
+            //      }
+            //      $this->failed();
+            //      $this->error = [
+            //        E::UNAUTHNTICATED,
+            //        'メールアドレスまたはパスワードが違います'
+            //      ];
 
             if (\Auth::login($data['username'], \Input::post('password'))) {
                 unset($this->body['data']);
@@ -193,7 +194,6 @@ class Controller_Admin_User extends Controller_Base
                 E::UNAUTHNTICATED,
                 'ニックネームまたはパスワードが違います'
             ];
-
         } catch (\Exception $e) {
             \Log::error($e->getMessage());
             $this->failed();
@@ -298,6 +298,7 @@ class Controller_Admin_User extends Controller_Base
         }
     }
 
+    //ユーザー情報取得
     public function get_my_info()
     {
         try {
@@ -310,7 +311,7 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-            if($user->group_id != 2){
+            if ($user->group_id != 2) {
                 $this->failed();
                 $this->error = [
                     E::INVALID_REQUEST,
@@ -331,8 +332,8 @@ class Controller_Admin_User extends Controller_Base
             $info['created_at'] = date("Y-m-d H:i:s", $user['created_at']);
             $info['updated_at'] = $user['updated_at'] == '0' ? $user['updated_at'] : date("Y-m-d H:i:s", $user['updated_at']);
             $query =
-            \DB::select('selected_start_date', 'selected_end_date', 'selected_route', 'selected_station', 'selected_facility', 'selected_repairer', 'selected_status', 'selected_architecture_ward')
-            ->from('users')->where('id', $user['id'])->execute()->as_array();
+                \DB::select('selected_start_date', 'selected_end_date', 'selected_route', 'selected_station', 'selected_facility', 'selected_repairer', 'selected_status', 'selected_architecture_ward')
+                ->from('users')->where('id', $user['id'])->execute()->as_array();
             $info['selected_start_date'] = $query[0]['selected_start_date'] ? $query[0]['selected_start_date'] : null;
             $info['selected_end_date'] = $query[0]['selected_end_date'] ? $query[0]['selected_end_date'] : null;
             $info['selected_route'] = $query[0]['selected_route'] ? unserialize($query[0]['selected_route']) : null;
@@ -369,8 +370,6 @@ class Controller_Admin_User extends Controller_Base
             $user->metadata;
             $this->success();
             $this->data = $user;
-
-
         } catch (\Exception $e) {
             $this->failed();
             $this->error = [
@@ -398,14 +397,14 @@ class Controller_Admin_User extends Controller_Base
                 return;
             }
 
-//            if ($pwlength < 8 || $pwlength > 16) {
-//                $this->failed();
-//                $this->error = [
-//                    E::INVALID_PARAM,
-//                    'パスワードは8文字以上16文字以内で入力してください'
-//                ];
-//                return;
-//            }
+            //            if ($pwlength < 8 || $pwlength > 16) {
+            //                $this->failed();
+            //                $this->error = [
+            //                    E::INVALID_PARAM,
+            //                    'パスワードは8文字以上16文字以内で入力してください'
+            //                ];
+            //                return;
+            //            }
             // 英数字チェック
             if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i', \Input::patch('new_password'))) {
                 // 英数字ではない場合
@@ -423,8 +422,7 @@ class Controller_Admin_User extends Controller_Base
             if ($user->password == $old_password_hash) {
                 $password = \Input::patch('new_password');
                 $new_password = \Auth::hash_password($password);
-                if ($old_password == $password)
-                {
+                if ($old_password == $password) {
                     $this->failed();
                     $this->error = [
                         E::INVALID_REQUEST,
@@ -443,7 +441,6 @@ class Controller_Admin_User extends Controller_Base
                     '現在のパスワードが間違っています'
                 ];
             }
-
         } catch (\Exception $e) {
             $this->failed();
             $this->error = [
@@ -485,7 +482,7 @@ class Controller_Admin_User extends Controller_Base
 
             $email_user = [];
             $email_user['user'] = $user;
-//            $url_base = \Fuel::$env == \FUEL::PRODUCTION ? 'https://www.minnanoeki.jp/' : \Uri::base(false);
+            //            $url_base = \Fuel::$env == \FUEL::PRODUCTION ? 'https://www.minnanoeki.jp/' : \Uri::base(false);
             $url_base = \Uri::base(false);
             $reissue_url = $url_base . $path;
             $email_user['reissue_url'] = $reissue_url;
@@ -498,7 +495,6 @@ class Controller_Admin_User extends Controller_Base
                 ->send(false);
             unset($this->body['data']);
             $this->success();
-
         } catch (\Exception $e) {
             $this->failed();
             \Log::error($e->getMessage());
@@ -553,14 +549,14 @@ class Controller_Admin_User extends Controller_Base
             ];
             return;
         }
-//        if ($pwlength < 8 || $pwlength > 16) {
-//            $this->failed();
-//            $this->error = [
-//                E::INVALID_PARAM,
-//                'パスワードは8文字以上16文字以内で入力してください'
-//            ];
-//            return;
-//        }
+        //        if ($pwlength < 8 || $pwlength > 16) {
+        //            $this->failed();
+        //            $this->error = [
+        //                E::INVALID_PARAM,
+        //                'パスワードは8文字以上16文字以内で入力してください'
+        //            ];
+        //            return;
+        //        }
         if (!preg_match('/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{6,16}+\z/i', \Input::post('password'))) {
             // 英数字ではない場合
             $this->failed();
@@ -609,7 +605,7 @@ class Controller_Admin_User extends Controller_Base
                 ];
                 return;
             }
-            if($user->group_id != 2){
+            if ($user->group_id != 2) {
                 $this->failed();
                 $this->error = [
                     E::UNAUTHNTICATED,
@@ -620,7 +616,6 @@ class Controller_Admin_User extends Controller_Base
             \Auth::delete_user($user->username);
             unset($this->body['data']);
             $this->success();
-
         } catch (\Exception $e) {
             $this->failed();
             $this->error = [
@@ -666,9 +661,9 @@ class Controller_Admin_User extends Controller_Base
     }
 
     public function post_export()
-	{
-		try{
-			$sql = <<<h
+    {
+        try {
+            $sql = <<<h
 SELECT 
 	users.id as user_id,
 	users.username as user_username,
@@ -678,82 +673,80 @@ FROM
 	users
 h;
 
-			$data = \DB::query($sql)->execute();
-			if(count($data) === 0){
-				$this->error = [
-					E::NOT_FOUND,
-					'情報が存在しません。'
-				];
-			}
-			foreach ($data as $value){
-				$data_list[] = [
-					'ID' => $value['user_id'],
-					'ユーザ名' => $value['user_username'],
-					'メールアドレス' => $value['user_email'],
-					'登録日' => date('Y/m/d H:i:s',$value['user_created_at'])
-				];
-			}
+            $data = \DB::query($sql)->execute();
+            if (count($data) === 0) {
+                $this->error = [
+                    E::NOT_FOUND,
+                    '情報が存在しません。'
+                ];
+            }
+            foreach ($data as $value) {
+                $data_list[] = [
+                    'ID' => $value['user_id'],
+                    'ユーザ名' => $value['user_username'],
+                    'メールアドレス' => $value['user_email'],
+                    '登録日' => date('Y/m/d H:i:s', $value['user_created_at'])
+                ];
+            }
 
-			$head = [
-				'ID',
-				'ユーザ名',
-				'メールアドレス',
-				'登録日'
-			];
+            $head = [
+                'ID',
+                'ユーザ名',
+                'メールアドレス',
+                '登録日'
+            ];
 
-			// 書き込み用ファイル開く
-			$csv_file_path = 'userss_list' . time() . rand() . '.csv';
-			$f = fopen($csv_file_path, 'w');
-			if ($f) {
-				// カラムの書き込み
-				mb_convert_variables('SJIS-win', 'UTF-8', $head);
-				fputcsv($f, $head);
+            // 書き込み用ファイル開く
+            $csv_file_path = 'userss_list' . time() . rand() . '.csv';
+            $f = fopen($csv_file_path, 'w');
+            if ($f) {
+                // カラムの書き込み
+                mb_convert_variables('SJIS-win', 'UTF-8', $head);
+                fputcsv($f, $head);
 
-				// データ書き込み
-				foreach ($data_list as $data) {
-					mb_convert_variables('SJIS-win', 'UTF-8', $data);
-					mb_convert_encoding( "髙﨑纊①㈱㌔ｱｲｳｴｵあいうえおabc", "UTF-8", "SJIS-win");
-					fputcsv($f, $data);
-				}
-			}
-			// ファイルを閉じる
-			fclose($f);
+                // データ書き込み
+                foreach ($data_list as $data) {
+                    mb_convert_variables('SJIS-win', 'UTF-8', $data);
+                    mb_convert_encoding("髙﨑纊①㈱㌔ｱｲｳｴｵあいうえおabc", "UTF-8", "SJIS-win");
+                    fputcsv($f, $data);
+                }
+            }
+            // ファイルを閉じる
+            fclose($f);
 
-			$filename = "users_list.csv";
-			//ホワイトスペース相当の文字をアンダースコアに
-			$filename = preg_replace('/\\s/u', '_', $filename);
-			//ファイル名に使えない文字をアンダースコアに
-			$filename = str_replace(array ('\\', '/', ':', '*', '?', '"', '<', '>', '|'), '_', $filename);
-			header('Content-Encoding: UTF-8');
-			header('Content-Type: text/csv');
-			header('Content-Disposition: attachment; filename="' . $filename . '"');
-			header('Content-Transfer-Encoding: binary');
-			readfile($csv_file_path);
-			unlink($csv_file_path);
-			exit();
-		}
-		catch (\Exception $e) {
-			$this->failed();
-			$this->error = [
-				E::SERVER_ERROR,
-				'CSVエクスポート処理に失敗しました。'
-			];
-			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
-		}
-	}
+            $filename = "users_list.csv";
+            //ホワイトスペース相当の文字をアンダースコアに
+            $filename = preg_replace('/\\s/u', '_', $filename);
+            //ファイル名に使えない文字をアンダースコアに
+            $filename = str_replace(array('\\', '/', ':', '*', '?', '"', '<', '>', '|'), '_', $filename);
+            header('Content-Encoding: UTF-8');
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Transfer-Encoding: binary');
+            readfile($csv_file_path);
+            unlink($csv_file_path);
+            exit();
+        } catch (\Exception $e) {
+            $this->failed();
+            $this->error = [
+                E::SERVER_ERROR,
+                'CSVエクスポート処理に失敗しました。'
+            ];
+            $this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+        }
+    }
 
     public function get_test()
     {
         $reissue_url = '/getri';
-        if(substr($reissue_url,0,1) == '/') {
+        if (substr($reissue_url, 0, 1) == '/') {
             echo 'hello';
         }
-//        $tmp = ltrim($reissue_url,'/');
-//        var_dump($tmp);
-//        if (substr($reissue_url, 0 )){
-//            echo 'hello';
-//            $reissue_url = ltrim($reissue_url, '/');
-//        }
+        //        $tmp = ltrim($reissue_url,'/');
+        //        var_dump($tmp);
+        //        if (substr($reissue_url, 0 )){
+        //            echo 'hello';
+        //            $reissue_url = ltrim($reissue_url, '/');
+        //        }
     }
 }
-
