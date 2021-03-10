@@ -287,7 +287,6 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 
 		if ($user->group_id != 2) {
-			$this->failed();
 			$this->error = [
 				E::INVALID_REQUEST,
 				'権限がありません'
@@ -302,23 +301,23 @@ class Controller_Admin_Contribution extends Controller_Base
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'タイトルを入力してください'
+				"タイトルを入力してください"
 			];
 			return;
 		}
-		if (mb_strlen($title) > 50) {
+		if (mb_strlen($title) > 5) {
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'タイトルは50字以内で入力してください'
+				"タイトルは5文字以内で入力してください"
 			];
 			return;
 		}
-		if (mb_strlen($body) > 500) {
+		if (mb_strlen($body) > 5) {
 			$this->failed();
 			$this->error = [
 				E::INVALID_PARAM,
-				'本文は500字以内で入力してください'
+				"本文は5文字以内で入力してください"
 			];
 			return;
 		}
@@ -330,8 +329,6 @@ class Controller_Admin_Contribution extends Controller_Base
 			$information->body = $body;
 			$information->is_private = 0;
 			$information->save();
-
-			unset($this->body['data']);
 			$this->success();
 		} catch (\Exception $e) {
 			$this->failed();
@@ -343,9 +340,81 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
-	public function get_information_list()
+
+	// public function post_new_information()
+	// {
+	// 	if (!$user = \Auth_User::get_user()) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::UNAUTHNTICATED,
+	// 			'認証エラーです'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	if ($user->group_id != 2) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_REQUEST,
+	// 			'権限がありません'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	$title = \Input::post('title');
+	// 	$body = \Input::post('body');
+
+	// 	if (mb_strlen($title) == 0) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'タイトルを入力してください'
+	// 		];
+	// 		return;
+	// 	}
+	// 	if (mb_strlen($title) > 50) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'タイトルは50字以内で入力してください'
+	// 		];
+	// 		return;
+	// 	}
+	// 	if (mb_strlen($body) > 500) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::INVALID_PARAM,
+	// 			'本文は500字以内で入力してください'
+	// 		];
+	// 		return;
+	// 	}
+
+	// 	try {
+	// 		$information = \Model_Information::forge();
+	// 		$information->title = $title . "test";
+	// 		$information->date = date("Y-m-d H:i:s");
+	// 		$information->body = $body . "test";
+	// 		$information->is_private = 0;
+	// 		$information->save();
+
+	// 		unset($this->body['data']);
+	// 		// $this->success();
+	// 	} catch (\Exception $e) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::SERVER_ERROR,
+	// 			'お知らせの作成に失敗しました'
+	// 		];
+	// 		$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+	// 	}
+	// }
+
+	public function get_information_filter()
+
 	{
+
 		try {
+			//verify : 確認
 			if (!$data = $this->verify([
 				'limit',
 				'p',
@@ -371,6 +440,61 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 
+			$informations = \Model_Information::searchFilter();
+			$this->list = $informations;
+
+			$this->success();
+		} catch (\Exception $e) {
+			$this->failed();
+			$this->error = [
+				E::SERVER_ERROR,
+				'お知らせの取得に失敗しました'
+			];
+			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+		}
+	}
+
+<<<<<<< HEAD
+	public function patch_edit_information()
+=======
+
+
+
+	public function get_information_list()
+>>>>>>> temp1
+	{
+
+
+
+		try {
+			//verify : 確認
+			if (!$data = $this->verify([
+				'limit',
+				'p',
+			])) {
+				return;
+			}
+
+
+			if (!$user = \Auth_User::get_user()) {
+				$this->failed();
+				$this->error = [
+					E::UNAUTHNTICATED,
+					'認証エラーです'
+				];
+				return;
+			}
+
+			if ($user->group_id != 2) {
+				$this->failed();
+				$this->error = [
+					E::INVALID_REQUEST,
+					'権限がありません'
+				];
+				return;
+			}
+
+
 			$this->list = \Model_Information::search($data);
 			$this->success();
 		} catch (\Exception $e) {
@@ -383,11 +507,73 @@ class Controller_Admin_Contribution extends Controller_Base
 		}
 	}
 
+
+	// public function patch_edit_information()
+	// {
+	// 	try {
+
+	// 		if (!$user = \Auth_User::get_user()) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::UNAUTHNTICATED,
+	// 				'認証エラーです'
+	// 			];
+	// 			return;
+	// 		}
+
+	// 		if ($user->group_id != 2) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_REQUEST,
+	// 				'権限がありません'
+	// 			];
+	// 			return;
+	// 		}
+	// 		$title = \Input::patch('title');
+	// 		$body = \Input::patch('body');
+	// 		$information = \Model_Information::find(\Input::patch('information_id'));
+	// 		if (mb_strlen($title) == 0) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'タイトルを入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		if (mb_strlen($title) > 50) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'タイトルは50字以内で入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		if (mb_strlen($body) > 500) {
+	// 			$this->failed();
+	// 			$this->error = [
+	// 				E::INVALID_PARAM,
+	// 				'本文は500字以内で入力してください'
+	// 			];
+	// 			return;
+	// 		}
+	// 		// \Log::debug("edit errors");
+	// 		$information->title = $title;
+	// 		$information->body = $body;
+	// 		$information->save();
+	// 		unset($this->body['data']);
+	// 		$this->success();
+	// 	} catch (\Exception $e) {
+	// 		$this->failed();
+	// 		$this->error = [
+	// 			E::SERVER_ERROR,
+	// 			'お知らせの更新に失敗しました'
+	// 		];
+	// 		$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+	// 		\Log::debug($this->body['errorlog']);
+	// 	}
+	// }
 	public function patch_edit_information()
 	{
-
-
-
 		try {
 
 			if (!$user = \Auth_User::get_user()) {
@@ -408,9 +594,6 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 
-			$post = \Model_Post::find(\Input::patch('id'));
-			$post->overview = "overview";
-			$post->save();
 			$title = \Input::patch('title');
 			$body = \Input::patch('body');
 			$information = \Model_Information::find(\Input::patch('information_id'));
@@ -442,8 +625,9 @@ class Controller_Admin_Contribution extends Controller_Base
 			$information->title = $title . "test";
 			$information->body = $body . "tests";
 			$information->save();
-			\Log::debug($this->body['data']);
-			unset($this->body['data']);
+
+			// unset($this->body['data']);
+
 			$this->success();
 		} catch (\Exception $e) {
 			$this->failed();
@@ -454,71 +638,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
 		}
 	}
-	// public function patch_edit_information ()
-	// {
-	// 	try {
 
-	// 		if (!$user = \Auth_User::get_user()) {
-	// 			$this->failed();
-	// 			$this->error = [
-	// 				E::UNAUTHNTICATED,
-	// 				'認証エラーです'
-	// 			];
-	// 			return;
-	// 		}
-
-	// 		if ($user->group_id != 2) {
-	// 			$this->failed();
-	// 			$this->error = [
-	// 				E::INVALID_REQUEST,
-	// 				'権限がありません'
-	// 			];
-	// 			return;
-	// 		}
-
-	// 		$title = \Input::patch('title');
-	// 		$body = \Input::patch('body');
-	// 		$information = \Model_Information::find(\Input::patch('information_id'));
-	// 		if (mb_strlen($title) == 0) {
-	// 			$this->failed();
-	// 			$this->error = [
-	// 				E::INVALID_PARAM,
-	// 				'タイトルを入力してください'
-	// 			];
-	// 			return;
-	// 		}
-	// 		if (mb_strlen($title) > 50) {
-	// 			$this->failed();
-	// 			$this->error = [
-	// 				E::INVALID_PARAM,
-	// 				'タイトルは50字以内で入力してください'
-	// 			];
-	// 			return;
-	// 		}
-	// 		if (mb_strlen($body) > 500) {
-	// 			$this->failed();
-	// 			$this->error = [
-	// 				E::INVALID_PARAM,
-	// 				'本文は500字以内で入力してください'
-	// 			];
-	// 			return;
-	// 		}
-
-	// 		$information->title = $title;
-	// 		$information->body = $body;
-	// 		$information->save();
-	// 		unset($this->body['data']);
-	// 		$this->success();
-	// 	}
-	// 	catch (\Exception $e) {
-	// 		$this->failed();
-	// 		$this->error = [
-	// 			E::SERVER_ERROR,
-	// 			'お知らせの更新に失敗しました'
-	// 		];
-	// 		$this->body['errorlog'] = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
-	// 	}
-	// }
 
 	public function patch_delete_information()
 	{
@@ -701,6 +821,7 @@ class Controller_Admin_Contribution extends Controller_Base
 	public function delete_remove()
 	{
 		try {
+			//ログイン情報確認
 			if (!$user = \Auth_User::get_user()) {
 				$this->failed();
 				$this->error = [
@@ -709,6 +830,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
+
 
 			if ($user->group_id != 2) {
 				$this->failed();
@@ -719,6 +841,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				return;
 			}
 
+			// なんのID??
 			// 引数idを取得
 			$id = \Input::get('id');
 			if (is_null($id)) {
@@ -729,7 +852,6 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-
 			if (!is_numeric($id)) {
 				$this->failed();
 				$this->error = [
@@ -738,7 +860,7 @@ class Controller_Admin_Contribution extends Controller_Base
 				];
 				return;
 			}
-
+			// 削除の投稿IDが無いと"指定した投稿データは存在しません"表示
 			if (!$delete = \Model_Post::find($id)) {
 				$this->failed();
 				$this->error = [
@@ -825,7 +947,7 @@ class Controller_Admin_Contribution extends Controller_Base
 			$architecture_ward_search = \Input::get('architecture_ward_search');
 			$order_base = array(); //MEMO 配列作成
 			$search_material = array();
-			$user->to_array();
+
 
 
 			//MEMO 以下昇順降順処理
