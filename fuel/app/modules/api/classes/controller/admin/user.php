@@ -1,7 +1,6 @@
 <?php
 
 namespace Api;
-
 /**
  * Class Controller_User
  * @package Api
