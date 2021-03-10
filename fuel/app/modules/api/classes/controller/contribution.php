@@ -1,7 +1,7 @@
 <?php
 
 namespace Api;
-
+//pushしてる？
 class Controller_Contribution extends Controller_Base
 {
   //ホーム、エレベーターなどの場所
@@ -234,6 +234,9 @@ class Controller_Contribution extends Controller_Base
         ];
         return;
       }
+
+
+
 
       $post = \Model_Post::forge();
       //     $post = \Model_Post::forge();
