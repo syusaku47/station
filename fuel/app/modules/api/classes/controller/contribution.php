@@ -1,7 +1,7 @@
 <?php
 
 namespace Api;
-//pushしてる？
+//pushしました！
 class Controller_Contribution extends Controller_Base
 {
   //ホーム、エレベーターなどの場所
@@ -222,7 +222,10 @@ class Controller_Contribution extends Controller_Base
       // $before_post = \DB::select('*')->from("posts")->where("id", "=", $contributor_id)->get_one()->to_array()->get();
 
 
-      $before_post = \DB::select('*')->from('posts')->where('id', '=', $contributor_id)->execute()->as_array();
+      // $before_post = \DB::select('*')->from('posts')->where('id', '=', $contributor_id)->execute()->as_array();
+      $before_post = \DB::select('id', 'parent_id')->from('posts')->where('id', '=', $contributor_id)->execute();
+      // $before_post = \Model_Post::select('id', 'name')->where('id', '=', $contributor_id)->execute()->as_array();
+      // $before_post = \Model_Post::find(1);
 
 
       \Log::debug($before_post);
@@ -243,7 +246,6 @@ class Controller_Contribution extends Controller_Base
       $post->child_id = 0;
       $post->contributor_id = $contributor_id;
 
-      \Log::debug($before_post[0]['contributor_id']);
       $post->route_id = $before_post[0]['route_id'];
       $post->station_id = $before_post->station_id;
       $post->status = '未対応';
@@ -779,7 +781,6 @@ class Controller_Contribution extends Controller_Base
   public function get_one()
   {
     $id = \Input::get('contribution_id');
-    \Log::debug("get_one");
     try {
       $contribute = \Model_Post::get_contribution_by_id($id);
       $this->data = $contribute;
